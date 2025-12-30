@@ -669,6 +669,7 @@
                     <button onclick="checkAdminPassword()">✅ Login</button>
                     <button onclick="closeAdminLogin()" style="background: linear-gradient(135deg, #FFB3D9, #FFD4E5);">❌ Cancel</button>
                 </div>
+                <p style="color: #7EC8E3; font-size: 0.9em; margin-top: 15px;">Default password: <strong>admin123</strong><br>(Change it in admin panel!)</p>
             </div>
         </div>
 
@@ -1300,12 +1301,15 @@
                 return;
             }
 
-            quests.push({
+            const newQuest = {
                 id: Date.now(),
                 name: name,
                 points: points,
                 completed: false
-            });
+            };
+            
+            quests.push(newQuest);
+            console.log('➕ Quest added:', newQuest, 'Total quests:', quests.length);
 
             document.getElementById('questName').value = '';
             document.getElementById('questPoints').value = '10';
@@ -1313,7 +1317,7 @@
             renderQuests();
             renderAdminQuests();
             updateStats();
-            saveToStorage();
+            saveToStorage(); // This should trigger the save with debug logs
         }
 
         function toggleQuest(id) {
@@ -1576,11 +1580,11 @@
         function petBuddy() {
             const buddy = document.getElementById('studyBuddy');
             const messages = [
-                "Çok iyi gidiyorsun! 💙",
-                "Gördüğüm en yetenikli kız sensin! 🌟",
-                "Profesör Ahtapot seni çok seviyor! 🐠",
-                "Profesör Ahtapot senin başarabileceğine inanıyor! 💪",
-                "Unutma, mola vermek en doğal hakkın! 🌊"
+                "You're doing great! 💙",
+                "Keep going! 🌟",
+                "I believe in you! 🐠",
+                "You've got this! 💪",
+                "Taking breaks is important too! 🌊"
             ];
             
             // Show random encouraging message
@@ -1639,28 +1643,25 @@
 
         function loadFromStorage() {
             if (syncEnabled && database) {
-                // Load from Firebase (real-time sync)
-                database.ref(`users/${USER_ID}`).once('value').then(snapshot => {
+                console.log('🔥 Setting up Firebase real-time sync...');
+                
+                // Use ONLY the real-time listener (simpler and more reliable)
+                database.ref(`users/${USER_ID}`).on('value', snapshot => {
                     const data = snapshot.val();
+                    console.log('📥 Firebase data received:', data);
+                    
                     if (data) {
                         applyLoadedData(data);
-                        
-                        // Set up real-time listener for changes
-                        database.ref(`users/${USER_ID}`).on('value', snapshot => {
-                            const newData = snapshot.val();
-                            if (newData) {
-                                applyLoadedData(newData);
-                            }
-                        });
                     } else {
-                        // No data in Firebase, try localStorage
+                        console.log('⚠️ No Firebase data found, checking localStorage');
                         loadFromLocalStorage();
                     }
-                }).catch(err => {
-                    console.error("Firebase load error:", err);
+                }, error => {
+                    console.error("❌ Firebase load error:", error);
                     loadFromLocalStorage();
                 });
             } else {
+                console.log('⚠️ Firebase not enabled, using localStorage only');
                 // No Firebase, use localStorage
                 loadFromLocalStorage();
             }
