@@ -1,0 +1,1649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Balık Kız 🐠</title>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', 'Arial Rounded MT Bold', sans-serif;
+            background: linear-gradient(135deg, #E0F7FF 0%, #FFE5F1 100%);
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated floating bubbles */
+        .bubble {
+            position: fixed;
+            bottom: -100px;
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.8), rgba(184, 224, 246, 0.4));
+            border-radius: 50%;
+            opacity: 0.6;
+            animation: floatUp 15s infinite ease-in;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.6;
+            }
+            90% {
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(-100vh) translateX(50px);
+                opacity: 0;
+            }
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 30px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Study Buddy Character */
+        .study-buddy {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 150px;
+            height: 150px;
+            background: url('./images/study-buddy.png') center/contain no-repeat;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: bobbing 3s ease-in-out infinite;
+            z-index: 999;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .study-buddy:hover {
+            transform: scale(1.1);
+        }
+
+        .study-buddy.studying {
+            animation: studying 2s ease-in-out infinite;
+        }
+
+        @keyframes bobbing {
+            0%, 100% { transform: translateY(0px) rotate(-5deg); }
+            50% { transform: translateY(-15px) rotate(5deg); }
+        }
+
+        @keyframes studying {
+            0%, 100% { transform: translateY(0px) rotate(0deg) scale(1); }
+            25% { transform: translateY(-5px) rotate(-3deg) scale(1.05); }
+            75% { transform: translateY(-5px) rotate(3deg) scale(1.05); }
+        }
+
+        /* Speech bubble for study buddy */
+        .speech-bubble {
+            position: fixed;
+            bottom: 180px;
+            left: 40px;
+            background: white;
+            padding: 15px 20px;
+            border-radius: 20px;
+            border: 3px solid #FF9ECD;
+            font-size: 1.1em;
+            color: #FF9ECD;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            z-index: 998;
+            animation: fadeInOut 4s ease-in-out;
+            pointer-events: none;
+        }
+
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 30px;
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 15px solid #FF9ECD;
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; transform: translateY(10px); }
+            10%, 90% { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            text-align: center;
+            color: #FF9ECD;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        /* Profile picture */
+        .profile-pic {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 4px solid #FF9ECD;
+            background: url('./images/profile-pic.png') center/cover no-repeat;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #7EC8E3;
+            font-size: 1.2em;
+            margin-bottom: 30px;
+        }
+
+        .settings-panel {
+            background: #FFF5F7;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border: 3px dashed #FFB3D9;
+        }
+
+        .setting-row {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            color: #FF9ECD;
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 1.1em;
+        }
+
+        input[type="number"] {
+            width: 150px;
+            padding: 10px;
+            border: 2px solid #B8E0F6;
+            border-radius: 15px;
+            font-size: 1em;
+            background: white;
+        }
+
+        .thermometer-container {
+            background: linear-gradient(to bottom, #B8E0F6, #E0F7FF);
+            border-radius: 25px;
+            padding: 30px;
+            margin: 30px 0;
+            position: relative;
+            border: 4px solid #7EC8E3;
+        }
+
+        /* Decorative coral/seaweed borders */
+        .thermometer-container::before {
+            content: '';
+            position: absolute;
+            left: -30px;
+            top: 0;
+            width: 80px;
+            height: 100%;
+            background: url('./images/coral-left.png') center/contain no-repeat;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .thermometer-container::after {
+            content: '';
+            position: absolute;
+            right: -30px;
+            top: 0;
+            width: 80px;
+            height: 100%;
+            background: url('./images/seaweed-right.png') center/contain no-repeat;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        /* Decorative shells at corners */
+        .shell-decoration {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: url('./images/shell.png') center/contain no-repeat;
+            z-index: 10;
+        }
+
+        .shell-top-left {
+            top: -20px;
+            left: -20px;
+            transform: rotate(-15deg);
+        }
+
+        .shell-top-right {
+            top: -20px;
+            right: -20px;
+            transform: rotate(15deg);
+        }
+
+        .shell-bottom-left {
+            bottom: -20px;
+            left: -20px;
+            transform: rotate(15deg);
+        }
+
+        .shell-bottom-right {
+            bottom: -20px;
+            right: -20px;
+            transform: rotate(-15deg);
+        }
+
+        .thermometer {
+            width: 100%;
+            height: 400px;
+            background: white;
+            border-radius: 50px;
+            position: relative;
+            border: 5px solid #7EC8E3;
+            overflow: hidden;
+            box-shadow: inset 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .thermometer-fill {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: linear-gradient(to top, #FF9ECD, #FFB3D9, #FFD4E5);
+            transition: height 0.5s ease;
+            border-radius: 0 0 45px 45px;
+        }
+
+        .reward-markers {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .reward-marker {
+            position: absolute;
+            right: -80px;
+            width: 70px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5em;
+            background: white;
+            border-radius: 50%;
+            border: 4px solid #7EC8E3;
+            transition: all 0.3s ease;
+        }
+
+        .reward-marker.unlocked {
+            background: #FFE5F1;
+            border-color: #FF9ECD;
+            transform: scale(1.2);
+            animation: bounce 0.5s ease;
+        }
+
+        .reward-marker.locked {
+            filter: grayscale(100%);
+            opacity: 0.5;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: scale(1.2); }
+            50% { transform: scale(1.4); }
+        }
+
+        .progress-text {
+            text-align: center;
+            font-size: 1.8em;
+            color: #FF9ECD;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        .quest-section {
+            background: #E0F7FF;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 3px solid #B8E0F6;
+        }
+
+        .quest-input-area {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .quest-input-area input[type="text"] {
+            flex: 1;
+            min-width: 200px;
+            padding: 12px;
+            border: 2px solid #7EC8E3;
+            border-radius: 15px;
+            font-size: 1em;
+        }
+
+        .quest-input-area input[type="number"] {
+            width: 100px;
+        }
+
+        button {
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #FF9ECD, #FFB3D9);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(255, 158, 205, 0.3);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(255, 158, 205, 0.5);
+        }
+
+        .quest-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .quest-item {
+            background: white;
+            padding: 15px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border: 2px solid #B8E0F6;
+            transition: all 0.3s ease;
+        }
+
+        .quest-item:hover {
+            border-color: #7EC8E3;
+            box-shadow: 0 4px 10px rgba(126, 200, 227, 0.2);
+        }
+
+        .quest-item.completed {
+            background: #FFE5F1;
+            border-color: #FF9ECD;
+            opacity: 0.8;
+        }
+
+        .quest-checkbox {
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            accent-color: #FF9ECD;
+        }
+
+        .quest-text {
+            flex: 1;
+            font-size: 1.1em;
+            color: #555;
+        }
+
+        .quest-item.completed .quest-text {
+            text-decoration: line-through;
+            color: #999;
+        }
+
+        .quest-points {
+            background: #FFD4E5;
+            color: #FF9ECD;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .delete-btn {
+            background: linear-gradient(135deg, #FFB3D9, #FFD4E5);
+            padding: 8px 15px;
+            font-size: 0.9em;
+        }
+
+        .timer-section {
+            background: #FFF5F7;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            text-align: center;
+            border: 3px solid #FFB3D9;
+        }
+
+        .timer-display {
+            font-size: 3em;
+            color: #FF9ECD;
+            font-weight: bold;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+        }
+
+        .timer-controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .floating-animals {
+            position: fixed;
+            pointer-events: none;
+            z-index: 1000;
+            font-size: 3em;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #E0F7FF, #FFF5F7);
+            padding: 20px;
+            border-radius: 20px;
+            text-align: center;
+            border: 3px solid #B8E0F6;
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            color: #FF9ECD;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            color: #7EC8E3;
+            font-size: 1em;
+            margin-top: 5px;
+        }
+
+        .milestone-item {
+            background: white;
+            padding: 15px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border: 2px solid #B8E0F6;
+        }
+
+        .milestone-item input[type="number"] {
+            width: 100px;
+        }
+
+        .milestone-item input[type="text"] {
+            flex: 1;
+            min-width: 200px;
+            padding: 10px;
+            border: 2px solid #B8E0F6;
+            border-radius: 10px;
+            font-size: 1em;
+        }
+
+        .milestone-item select {
+            padding: 10px;
+            border: 2px solid #B8E0F6;
+            border-radius: 10px;
+            font-size: 1.5em;
+            background: white;
+            cursor: pointer;
+        }
+
+        .remove-milestone-btn {
+            background: linear-gradient(135deg, #FFB3D9, #FFD4E5);
+            padding: 8px 15px;
+            font-size: 0.9em;
+            min-width: 80px;
+        }
+
+        /* Reward Popup Modal */
+        .reward-popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .reward-popup-content {
+            background: linear-gradient(135deg, #FFE5F1, #E0F7FF);
+            padding: 50px;
+            border-radius: 40px;
+            text-align: center;
+            max-width: 500px;
+            border: 5px solid #FF9ECD;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: popIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            position: relative;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.5) rotate(-5deg); opacity: 0; }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+
+        .reward-popup-emoji {
+            font-size: 6em;
+            animation: bounce 1s ease infinite;
+            display: block;
+            margin-bottom: 20px;
+        }
+
+        .reward-popup-title {
+            font-size: 2.5em;
+            color: #FF9ECD;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .reward-popup-text {
+            font-size: 1.5em;
+            color: #7EC8E3;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #FF9ECD;
+            animation: confettiFall 3s ease-out forwards;
+        }
+
+        @keyframes confettiFall {
+            to {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>
+            <div class="profile-pic"></div>
+            🐠 Balık Kızın Uygulaması 🐚
+        </h1>
+        <div class="subtitle">Bugün çok güzel bir gün olacak! 🌊</div>
+
+        <!-- Decorative shells -->
+        <div class="shell-decoration shell-top-left"></div>
+        <div class="shell-decoration shell-top-right"></div>
+
+        <!-- Hidden Admin Button (top right corner) -->
+        <div style="position: fixed; top: 20px; right: 20px; z-index: 9999;">
+            <button onclick="showAdminLogin()" style="background: rgba(255,255,255,0.3); backdrop-filter: blur(10px); border: 2px solid rgba(255,255,255,0.5); padding: 10px 15px; font-size: 0.9em;">
+                ⚙️ Admin
+            </button>
+        </div>
+
+        <!-- Admin Login Modal -->
+        <div id="adminLoginModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; justify-content: center; align-items: center;">
+            <div style="background: white; padding: 40px; border-radius: 30px; text-align: center; max-width: 400px;">
+                <h2 style="color: #FF9ECD; margin-bottom: 20px;">🔐 Admin Access</h2>
+                <input type="password" id="adminPassword" placeholder="Enter password" 
+                       style="width: 100%; padding: 15px; border: 2px solid #B8E0F6; border-radius: 15px; font-size: 1.1em; margin-bottom: 20px;"
+                       onkeypress="if(event.key === 'Enter') checkAdminPassword()">
+                <div style="display: flex; gap: 10px; justify-content: center;">
+                    <button onclick="checkAdminPassword()">✅ Login</button>
+                    <button onclick="closeAdminLogin()" style="background: linear-gradient(135deg, #FFB3D9, #FFD4E5);">❌ Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Panel -->
+        <div class="settings-panel" id="adminPanel" style="display: none; position: relative;">
+            <div style="position: absolute; top: 15px; right: 15px;">
+                <button onclick="closeAdminPanel()" style="background: linear-gradient(135deg, #FFB3D9, #FFD4E5); padding: 8px 15px; font-size: 0.9em;">
+                    👁️ Exit Admin
+                </button>
+            </div>
+            <h2 style="color: #FF9ECD; margin-bottom: 15px;">⚙️ Admin Settings</h2>
+            
+            <div class="setting-row">
+                <label>Points per minute of study time:</label>
+                <input type="number" id="pointsPerMinute" value="1" min="0.1" step="0.1" onchange="saveToStorage()">
+            </div>
+            
+            <div class="setting-row">
+                <label>Change Admin Password:</label>
+                <input type="password" id="newPassword" placeholder="New password">
+                <button onclick="changePassword()" style="margin-left: 10px;">🔒 Update Password</button>
+            </div>
+
+            <div class="setting-row">
+                <label>🔊 Celebration Sound Effect:</label>
+                <input type="file" id="soundFile" accept="audio/*" onchange="handleSoundUpload(this)">
+                <button onclick="testSound()" style="margin-left: 10px;">🎵 Test Sound</button>
+                <button onclick="removeSound()" style="margin-left: 10px; background: linear-gradient(135deg, #FFB3D9, #FFD4E5);">🔇 Remove</button>
+            </div>
+
+            <div class="setting-row">
+                <label>Sound Volume: <span id="volumeDisplay">80%</span></label>
+                <input type="range" id="volumeSlider" min="0" max="100" value="80" 
+                       style="width: 200px;" oninput="updateVolume(this.value)">
+            </div>
+
+            <hr style="margin: 20px 0; border: 1px dashed #FFB3D9;">
+
+            <h3 style="color: #FF9ECD; margin-bottom: 15px;">🔄 Reset Options</h3>
+            <p style="color: #666; margin-bottom: 15px;">⚠️ Use these carefully! These actions cannot be undone.</p>
+            
+            <div class="setting-row">
+                <button onclick="resetThermometer()" style="background: linear-gradient(135deg, #FFB3D9, #FFD4E5);">
+                    🌡️ Reset Thermometer (Keep Quests)
+                </button>
+                <button onclick="resetStudyTime()" style="background: linear-gradient(135deg, #FFB3D9, #FFD4E5); margin-left: 10px;">
+                    ⏱️ Reset Study Time Only
+                </button>
+            </div>
+            
+            <div class="setting-row" style="margin-top: 10px;">
+                <button onclick="resetEverything()" style="background: linear-gradient(135deg, #FF6B9D, #FF9ECD);">
+                    ⚠️ Reset Everything (Full Reset)
+                </button>
+            </div>
+
+            <hr style="margin: 20px 0; border: 1px dashed #FFB3D9;">
+
+            <h3 style="color: #7EC8E3; margin-bottom: 15px;">🌡️ Thermometer Customization</h3>
+            
+            <div class="setting-row">
+                <label>Thermometer Height:</label>
+                <input type="range" id="thermometerHeight" min="200" max="600" value="400" 
+                       style="width: 200px;" oninput="updateThermometerHeight(this.value)">
+                <span id="heightDisplay" style="margin-left: 10px; color: #7EC8E3;">400px</span>
+            </div>
+
+            <div class="setting-row">
+                <label>Thermometer Width:</label>
+                <input type="range" id="thermometerWidth" min="50" max="200" value="100" 
+                       style="width: 200px;" oninput="updateThermometerWidth(this.value)">
+                <span id="widthDisplay" style="margin-left: 10px; color: #7EC8E3;">100%</span>
+            </div>
+
+            <div class="setting-row">
+                <label>Fill Color:</label>
+                <select id="fillColor" onchange="updateThermometerColor(this.value)">
+                    <option value="pink">Pink Gradient (default)</option>
+                    <option value="blue">Blue Gradient</option>
+                    <option value="purple">Purple Gradient</option>
+                    <option value="green">Green Gradient</option>
+                    <option value="rainbow">Rainbow Gradient</option>
+                    <option value="ocean">Ocean Gradient</option>
+                </select>
+            </div>
+
+            <hr style="margin: 20px 0; border: 1px dashed #FFB3D9;">
+
+            <h3 style="color: #7EC8E3; margin-bottom: 15px;">📝 Quest Management</h3>
+            <p style="color: #666; margin-bottom: 15px;">Add and manage quests here. Only you can add/edit quests.</p>
+            
+            <div class="quest-input-area" style="margin-bottom: 20px;">
+                <input type="text" id="questName" placeholder="Enter quest name...">
+                <input type="number" id="questPoints" placeholder="Points" value="10" min="1">
+                <button onclick="addQuest()">➕ Add Quest</button>
+            </div>
+
+            <hr style="margin: 20px 0; border: 1px dashed #FFB3D9;">
+
+            <h3 style="color: #7EC8E3; margin-bottom: 15px;">🎁 Secret Reward Milestones</h3>
+            <p style="color: #666; margin-bottom: 15px;">⚠️ These rewards are hidden from her! They'll pop up as surprises when unlocked.</p>
+            
+            <div style="margin-bottom: 15px;">
+                <button onclick="addRewardMilestone()">➕ Add New Milestone</button>
+                <button onclick="resetToDefaults()" style="background: linear-gradient(135deg, #FFB3D9, #FFD4E5); margin-left: 10px;">
+                    🔄 Reset to Defaults
+                </button>
+            </div>
+            <div id="rewardMilestoneList" style="display: flex; flex-direction: column; gap: 10px;"></div>
+
+            <hr style="margin: 20px 0; border: 1px dashed #FFB3D9;">
+
+            <h3 style="color: #7EC8E3; margin-bottom: 15px;">📝 Quest Management</h3>
+            <p style="color: #666; margin-bottom: 15px;">Add and manage quests for her. She can only view and complete them.</p>
+            
+            <div class="quest-input-area">
+                <input type="text" id="adminQuestName" placeholder="Enter quest name...">
+                <input type="number" id="adminQuestPoints" placeholder="Points" value="10" min="1">
+                <button onclick="addQuest()">➕ Add Quest</button>
+            </div>
+            
+            <div id="adminQuestList" style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;"></div>
+        </div>
+
+        <div class="timer-section">
+            <h2 style="color: #FF9ECD; margin-bottom: 15px;">⏱️ Study Timer</h2>
+            <div class="timer-display" id="timerDisplay">00:00:00</div>
+            <div class="timer-controls">
+                <button onclick="startTimer()">▶️ Start</button>
+                <button onclick="pauseTimer()">⏸️ Pause</button>
+                <button onclick="stopTimer()">⏹️ Stop & Save</button>
+                <button onclick="resetTimer()">🔄 Reset</button>
+            </div>
+        </div>
+
+        <div class="thermometer-container">
+            <h2 style="color: #7EC8E3; text-align: center; margin-bottom: 20px;">🌡️ Progress Bar</h2>
+            <div class="thermometer">
+                <div class="thermometer-fill" id="thermometerFill"></div>
+                <div class="reward-markers" id="rewardMarkers"></div>
+            </div>
+            <div class="progress-text" id="progressText">0 / 100 points</div>
+        </div>
+
+        <div class="quest-section">
+            <h2 style="color: #7EC8E3; margin-bottom: 15px;">📝 Quest List</h2>
+            <p style="color: #999; font-size: 0.9em; margin-bottom: 15px;">✨ Your assigned tasks appear below</p>
+            <div class="quest-list" id="questList"></div>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number" id="totalQuests">0</div>
+                <div class="stat-label">Total Quests</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="completedQuests">0</div>
+                <div class="stat-label">Completed Quests</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalTime">0h 0m</div>
+                <div class="stat-label">Total Study Time</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Animated Bubbles -->
+    <div id="bubbleContainer"></div>
+
+    <!-- Study Buddy Character -->
+    <div class="study-buddy" id="studyBuddy" onclick="petBuddy()"></div>
+
+    <!-- Reward Popup Modal -->
+    <div id="rewardPopup" class="reward-popup">
+        <div class="reward-popup-content">
+            <span class="reward-popup-emoji" id="popupEmoji">🎉</span>
+            <div class="reward-popup-title">🎊 Milestone Unlocked! 🎊</div>
+            <div class="reward-popup-text" id="popupReward">Amazing reward!</div>
+            <button onclick="closeRewardPopup()" style="font-size: 1.2em; padding: 15px 40px;">
+                🎉 Awesome!
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDAboE0PsB5jSPx_cobk6tjQ8R6N7h7Iok",
+            authDomain: "balik-kiz.firebaseapp.com",
+            databaseURL: "https://balik-kiz-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "balik-kiz",
+            storageBucket: "balik-kiz.firebasestorage.app",
+            messagingSenderId: "644227301048",
+            appId: "1:644227301048:web:cda688ca9f54969f4abe4d",
+            measurementId: "G-CWPY1RW2QW"
+        };
+
+        // Initialize Firebase
+        let database = null;
+        let syncEnabled = false;
+
+        try {
+            firebase.initializeApp(firebaseConfig);
+            database = firebase.database();
+            syncEnabled = true;
+            console.log("✅ Firebase connected - sync enabled!");
+        } catch (error) {
+            console.log("⚠️ Firebase error - using local storage only:", error);
+            syncEnabled = false;
+        }
+
+        // User ID for syncing
+        const USER_ID = "balik-kiz";
+
+// State
+        // State
+        let totalPoints = 0;
+        let maxPoints = 100;
+        let quests = [];
+        let timerSeconds = 0;
+        let timerInterval = null;
+        let isTimerRunning = false;
+        let totalStudySeconds = 0;
+        let rewardMilestones = [];
+        let adminPassword = 'admin123';
+        let unlockedRewards = []; // Track which rewards have been shown
+        let lastCheckedPoints = 0; // Track last point value to detect new unlocks
+        let celebrationSound = null; // Audio object for celebration sound
+        let soundVolume = 0.8; // Default volume (80%)
+        let thermometerHeight = 400;
+        let thermometerWidth = 100;
+        let thermometerColor = 'pink';
+
+        // Marine animals for rewards
+        const animals = ['🐠', '🐡', '🐟', '🐙', '🦈', '🐳', '🐬', '🦀', '🐚', '⭐', '🦑', '🐋', '🦐', '🦞', '🐊', '🦭', '🦦', '🪼', '🪸', '🐢'];
+
+        // Initialize default milestones
+        function createDefaultMilestones() {
+            return [
+                { points: 20, reward: 'First reward!', emoji: '🐠' },
+                { points: 40, reward: 'Second reward!', emoji: '🐡' },
+                { points: 60, reward: 'Third reward!', emoji: '🐟' },
+                { points: 80, reward: 'Fourth reward!', emoji: '🐙' },
+                { points: 100, reward: 'Fifth reward!', emoji: '🦈' }
+            ];
+        }
+
+        // Admin functions
+        function showAdminLogin() {
+            document.getElementById('adminLoginModal').style.display = 'flex';
+            document.getElementById('adminPassword').value = '';
+            document.getElementById('adminPassword').focus();
+        }
+
+        function closeAdminLogin() {
+            document.getElementById('adminLoginModal').style.display = 'none';
+        }
+
+        function checkAdminPassword() {
+            const input = document.getElementById('adminPassword').value;
+            if (input === adminPassword) {
+                closeAdminLogin();
+                document.getElementById('adminPanel').style.display = 'block';
+                renderAdminQuests(); // Show admin quest list
+            } else {
+                alert('❌ Incorrect password!');
+                document.getElementById('adminPassword').value = '';
+            }
+        }
+
+        function closeAdminPanel() {
+            document.getElementById('adminPanel').style.display = 'none';
+        }
+
+        function changePassword() {
+            const newPass = document.getElementById('newPassword').value;
+            if (!newPass) {
+                alert('Please enter a new password!');
+                return;
+            }
+            if (newPass.length < 4) {
+                alert('Password must be at least 4 characters!');
+                return;
+            }
+            adminPassword = newPass;
+            document.getElementById('newPassword').value = '';
+            saveToStorage();
+            alert('✅ Password updated successfully!');
+        }
+
+        // Reset functions
+        function resetThermometer() {
+            if (confirm('⚠️ Reset thermometer progress to zero?\n\nThis will:\n• Reset points to 0\n• Reset unlocked rewards\n• Keep all quests\n• Keep study time\n\nContinue?')) {
+                totalPoints = 0;
+                lastCheckedPoints = 0;
+                unlockedRewards = [];
+                updateDisplay();
+                saveToStorage();
+                alert('✅ Thermometer reset! Points are back to zero.');
+            }
+        }
+
+        function resetStudyTime() {
+            if (confirm('⚠️ Reset total study time to zero?\n\nThis will only reset the study time counter.\nEverything else stays the same.\n\nContinue?')) {
+                totalStudySeconds = 0;
+                updateStats();
+                saveToStorage();
+                alert('✅ Study time reset!');
+            }
+        }
+
+        function resetEverything() {
+            if (confirm('🚨 FULL RESET WARNING 🚨\n\nThis will delete EVERYTHING:\n• All progress and points\n• All quests\n• All study time\n• All unlocked rewards\n• Reward milestones (back to defaults)\n• Sound settings\n\nOnly the password will be kept.\n\nAre you ABSOLUTELY sure?')) {
+                if (confirm('Last chance! This cannot be undone. Really reset everything?')) {
+                    // Reset everything except password
+                    totalPoints = 0;
+                    lastCheckedPoints = 0;
+                    unlockedRewards = [];
+                    quests = [];
+                    totalStudySeconds = 0;
+                    timerSeconds = 0;
+                    rewardMilestones = createDefaultMilestones();
+                    celebrationSound = null;
+                    soundVolume = 0.8;
+                    
+                    // Reset thermometer customization
+                    thermometerHeight = 400;
+                    thermometerWidth = 100;
+                    fillColorGradient = 'pink';
+                    
+                    // Update displays
+                    calculateMaxPoints();
+                    renderQuests();
+                    renderAdminQuests();
+                    renderRewardMilestones();
+                    updateDisplay();
+                    updateStats();
+                    updateTimerDisplay();
+                    applyThermometerSettings();
+                    
+                    // Save and inform
+                    saveToStorage();
+                    alert('✅ Everything has been reset! Starting fresh.');
+                }
+            }
+        }
+
+        // Sound functions
+        function handleSoundUpload(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const audioData = e.target.result;
+                celebrationSound = new Audio(audioData);
+                celebrationSound.volume = soundVolume;
+                saveToStorage();
+                alert('✅ Sound effect uploaded! Click "Test Sound" to preview.');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function testSound() {
+            if (celebrationSound) {
+                celebrationSound.currentTime = 0;
+                celebrationSound.play().catch(err => {
+                    alert('Error playing sound. Make sure you uploaded a valid audio file.');
+                });
+            } else {
+                alert('No sound uploaded yet! Upload an audio file first.');
+            }
+        }
+
+        function removeSound() {
+            celebrationSound = null;
+            document.getElementById('soundFile').value = '';
+            saveToStorage();
+            alert('🔇 Sound effect removed.');
+        }
+
+        function updateVolume(value) {
+            soundVolume = value / 100;
+            document.getElementById('volumeDisplay').textContent = value + '%';
+            if (celebrationSound) {
+                celebrationSound.volume = soundVolume;
+            }
+            saveToStorage();
+        }
+
+        function playRewardSound() {
+            if (celebrationSound) {
+                celebrationSound.currentTime = 0;
+                celebrationSound.volume = soundVolume;
+                celebrationSound.play().catch(err => {
+                    console.log('Could not play sound:', err);
+                });
+            }
+        }
+
+        // Thermometer customization functions
+        function updateThermometerHeight(value) {
+            thermometerHeight = parseInt(value);
+            document.getElementById('heightDisplay').textContent = value + 'px';
+            document.querySelector('.thermometer').style.height = value + 'px';
+            saveToStorage();
+        }
+
+        function updateThermometerWidth(value) {
+            thermometerWidth = parseInt(value);
+            document.getElementById('widthDisplay').textContent = value + '%';
+            document.querySelector('.thermometer').style.width = value + '%';
+            saveToStorage();
+        }
+
+        function updateThermometerColor(color) {
+            thermometerColor = color;
+            const fill = document.getElementById('thermometerFill');
+            
+            const gradients = {
+                pink: 'linear-gradient(to top, #FF9ECD, #FFB3D9, #FFD4E5)',
+                blue: 'linear-gradient(to top, #4A90E2, #7EC8E3, #B8E0F6)',
+                purple: 'linear-gradient(to top, #9B59B6, #BB8FCE, #D7BDE2)',
+                green: 'linear-gradient(to top, #2ECC71, #58D68D, #A9DFBF)',
+                rainbow: 'linear-gradient(to top, #FF6B6B, #FFD93D, #6BCB77, #4D96FF, #9B59B6)',
+                ocean: 'linear-gradient(to top, #0C4271, #1E6091, #3A7CA5, #81C3D7, #B8E0F6)'
+            };
+            
+            fill.style.background = gradients[color];
+            saveToStorage();
+        }
+
+        function applyThermometerSettings() {
+            document.querySelector('.thermometer').style.height = thermometerHeight + 'px';
+            document.querySelector('.thermometer').style.width = thermometerWidth + '%';
+            updateThermometerColor(thermometerColor);
+            
+            document.getElementById('thermometerHeight').value = thermometerHeight;
+            document.getElementById('thermometerWidth').value = thermometerWidth;
+            document.getElementById('fillColor').value = thermometerColor;
+            document.getElementById('heightDisplay').textContent = thermometerHeight + 'px';
+            document.getElementById('widthDisplay').textContent = thermometerWidth + '%';
+        }
+
+        // Initialize
+        function init() {
+            loadFromStorage();
+            if (rewardMilestones.length === 0) {
+                rewardMilestones = createDefaultMilestones();
+            }
+            calculateMaxPoints();
+            renderRewardMilestones();
+            applyThermometerSettings();
+            updateDisplay();
+            updateStats();
+            spawnFloatingAnimals();
+            createBubbles(); // Add bubbles
+            updateStudyBuddy(); // Initialize study buddy
+        }
+
+        // Reward milestone functions
+        function addRewardMilestone() {
+            const lastPoints = rewardMilestones.length > 0 
+                ? rewardMilestones[rewardMilestones.length - 1].points 
+                : 0;
+            
+            rewardMilestones.push({
+                points: lastPoints + 20,
+                reward: 'New reward!',
+                emoji: animals[rewardMilestones.length % animals.length]
+            });
+            
+            renderRewardMilestones();
+            calculateMaxPoints();
+            updateDisplay();
+            saveToStorage();
+        }
+
+        function removeRewardMilestone(index) {
+            if (rewardMilestones.length <= 1) {
+                alert('You need at least one reward milestone! 🐠');
+                return;
+            }
+            rewardMilestones.splice(index, 1);
+            renderRewardMilestones();
+            calculateMaxPoints();
+            updateDisplay();
+            saveToStorage();
+        }
+
+        function updateRewardMilestone(index, field, value) {
+            if (field === 'points') {
+                rewardMilestones[index].points = parseInt(value) || 0;
+            } else if (field === 'reward') {
+                rewardMilestones[index].reward = value;
+            } else if (field === 'emoji') {
+                rewardMilestones[index].emoji = value;
+            }
+            
+            calculateMaxPoints();
+            updateDisplay();
+            saveToStorage();
+        }
+
+        function resetToDefaults() {
+            if (confirm('Reset all milestones to defaults? This will keep your current progress.')) {
+                rewardMilestones = createDefaultMilestones();
+                renderRewardMilestones();
+                calculateMaxPoints();
+                updateDisplay();
+                saveToStorage();
+            }
+        }
+
+        function renderRewardMilestones() {
+            const container = document.getElementById('rewardMilestoneList');
+            container.innerHTML = '';
+
+            rewardMilestones.sort((a, b) => a.points - b.points);
+
+            rewardMilestones.forEach((milestone, index) => {
+                const item = document.createElement('div');
+                item.className = 'milestone-item';
+                
+                const emojiOptions = animals.map(a => 
+                    `<option value="${a}" ${a === milestone.emoji ? 'selected' : ''}>${a}</option>`
+                ).join('');
+
+                item.innerHTML = `
+                    <label style="color: #7EC8E3; font-weight: bold; min-width: 80px;">Milestone ${index + 1}:</label>
+                    <input type="number" value="${milestone.points}" min="1" 
+                           onchange="updateRewardMilestone(${index}, 'points', this.value)"
+                           placeholder="Points">
+                    <label style="color: #7EC8E3;">pts →</label>
+                    <select onchange="updateRewardMilestone(${index}, 'emoji', this.value)">
+                        ${emojiOptions}
+                    </select>
+                    <input type="text" value="${milestone.reward}" 
+                           onchange="updateRewardMilestone(${index}, 'reward', this.value)"
+                           placeholder="Reward description">
+                    <button class="remove-milestone-btn" onclick="removeRewardMilestone(${index})">Remove</button>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function calculateMaxPoints() {
+            if (rewardMilestones.length > 0) {
+                maxPoints = Math.max(...rewardMilestones.map(m => m.points));
+            } else {
+                maxPoints = 100;
+            }
+        }
+
+        // Timer functions
+        function startTimer() {
+            if (!isTimerRunning) {
+                isTimerRunning = true;
+                updateStudyBuddy(); // Update buddy appearance
+                timerInterval = setInterval(() => {
+                    timerSeconds++;
+                    totalStudySeconds++;
+                    updateTimerDisplay();
+                    
+                    // Add points per minute
+                    const pointsPerMinute = parseFloat(document.getElementById('pointsPerMinute').value);
+                    if (timerSeconds % 60 === 0) {
+                        addPoints(pointsPerMinute);
+                    }
+                }, 1000);
+            }
+        }
+
+        function pauseTimer() {
+            isTimerRunning = false;
+            updateStudyBuddy(); // Update buddy appearance
+            clearInterval(timerInterval);
+        }
+
+        function stopTimer() {
+            pauseTimer();
+            const pointsPerMinute = parseFloat(document.getElementById('pointsPerMinute').value);
+            const remainingSeconds = timerSeconds % 60;
+            if (remainingSeconds > 0) {
+                addPoints((remainingSeconds / 60) * pointsPerMinute);
+            }
+            timerSeconds = 0;
+            updateTimerDisplay();
+            saveToStorage();
+        }
+
+        function resetTimer() {
+            pauseTimer();
+            timerSeconds = 0;
+            updateTimerDisplay();
+        }
+
+        function updateTimerDisplay() {
+            const hours = Math.floor(timerSeconds / 3600);
+            const minutes = Math.floor((timerSeconds % 3600) / 60);
+            const seconds = timerSeconds % 60;
+            document.getElementById('timerDisplay').textContent = 
+                `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        // Quest functions
+        function addQuest() {
+            const name = document.getElementById('adminQuestName').value.trim();
+            const points = parseInt(document.getElementById('adminQuestPoints').value);
+            
+            if (!name) {
+                alert('Please enter a quest name! 🐠');
+                return;
+            }
+
+            quests.push({
+                id: Date.now(),
+                name: name,
+                points: points,
+                completed: false
+            });
+
+            document.getElementById('adminQuestName').value = '';
+            document.getElementById('adminQuestPoints').value = '10';
+            
+            renderQuests();
+            renderAdminQuests();
+            updateStats();
+            saveToStorage();
+        }
+
+        function toggleQuest(id) {
+            const quest = quests.find(q => q.id === id);
+            if (!quest) return;
+
+            quest.completed = !quest.completed;
+            
+            if (quest.completed) {
+                addPoints(quest.points);
+                celebrateCompletion();
+            } else {
+                addPoints(-quest.points);
+            }
+
+            renderQuests();
+            renderAdminQuests();
+            updateStats();
+            saveToStorage();
+        }
+
+        function deleteQuest(id) {
+            const quest = quests.find(q => q.id === id);
+            if (quest && quest.completed) {
+                addPoints(-quest.points);
+            }
+            
+            quests = quests.filter(q => q.id !== id);
+            renderQuests();
+            renderAdminQuests();
+            updateStats();
+            saveToStorage();
+        }
+
+        function renderQuests() {
+            const questList = document.getElementById('questList');
+            questList.innerHTML = '';
+
+            if (quests.length === 0) {
+                questList.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">No quests assigned yet! 🐠</p>';
+                return;
+            }
+
+            quests.forEach(quest => {
+                const questItem = document.createElement('div');
+                questItem.className = `quest-item ${quest.completed ? 'completed' : ''}`;
+                questItem.innerHTML = `
+                    <div style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; font-size: 1.5em;">
+                        ${quest.completed ? '✅' : '⏳'}
+                    </div>
+                    <div class="quest-text">${quest.name}</div>
+                    <div class="quest-points">+${quest.points} pts</div>
+                `;
+                questList.appendChild(questItem);
+            });
+        }
+
+        // Admin quest list (with controls)
+        function renderAdminQuests() {
+            const adminQuestList = document.getElementById('adminQuestList');
+            if (!adminQuestList) return; // Not in admin panel
+            
+            adminQuestList.innerHTML = '';
+
+            if (quests.length === 0) {
+                adminQuestList.innerHTML = '<p style="color: #999; text-align: center; padding: 10px;">No quests created yet.</p>';
+                return;
+            }
+
+            quests.forEach(quest => {
+                const questItem = document.createElement('div');
+                questItem.className = `quest-item ${quest.completed ? 'completed' : ''}`;
+                questItem.style.display = 'flex';
+                questItem.style.alignItems = 'center';
+                questItem.style.gap = '15px';
+                questItem.innerHTML = `
+                    <input type="checkbox" class="quest-checkbox" 
+                           ${quest.completed ? 'checked' : ''} 
+                           onchange="toggleQuest(${quest.id})">
+                    <div class="quest-text" style="flex: 1;">${quest.name}</div>
+                    <div class="quest-points">+${quest.points} pts</div>
+                    <button class="delete-btn" onclick="deleteQuest(${quest.id})">🗑️</button>
+                `;
+                adminQuestList.appendChild(questItem);
+            });
+        }
+
+        // Points and progress
+        function addPoints(points) {
+            totalPoints = Math.max(0, totalPoints + points);
+            checkNewRewards(); // Check if any rewards were unlocked
+            updateDisplay();
+            saveToStorage();
+        }
+
+        function updateDisplay() {
+            const percentage = Math.min(100, (totalPoints / maxPoints) * 100);
+            document.getElementById('thermometerFill').style.height = `${percentage}%`;
+            document.getElementById('progressText').textContent = `${totalPoints.toFixed(1)} / ${maxPoints} points`;
+            
+            updateRewardMarkers();
+        }
+
+        function updateRewardMarkers() {
+            const markersContainer = document.getElementById('rewardMarkers');
+            markersContainer.innerHTML = '';
+
+            rewardMilestones.forEach((milestone, index) => {
+                const percentage = (milestone.points / maxPoints) * 100;
+                const isUnlocked = totalPoints >= milestone.points;
+
+                const marker = document.createElement('div');
+                marker.className = `reward-marker ${isUnlocked ? 'unlocked' : 'locked'}`;
+                marker.style.top = `${100 - percentage}%`;
+                marker.style.transform = 'translateY(50%)';
+                marker.textContent = isUnlocked ? milestone.emoji : '❓';
+                // Only show points threshold, NOT the reward text (keep it secret!)
+                marker.title = `${milestone.points} points`;
+                
+                markersContainer.appendChild(marker);
+            });
+        }
+
+        // Check for newly unlocked rewards
+        function checkNewRewards() {
+            rewardMilestones.forEach(milestone => {
+                // Check if this milestone was just unlocked
+                if (totalPoints >= milestone.points && 
+                    lastCheckedPoints < milestone.points &&
+                    !unlockedRewards.includes(milestone.points)) {
+                    
+                    // Mark as unlocked
+                    unlockedRewards.push(milestone.points);
+                    
+                    // Show popup after a brief delay
+                    setTimeout(() => {
+                        showRewardPopup(milestone);
+                    }, 500);
+                }
+            });
+            
+            lastCheckedPoints = totalPoints;
+            saveToStorage();
+        }
+
+        function showRewardPopup(milestone) {
+            // Play celebration sound
+            playRewardSound();
+            
+            document.getElementById('popupEmoji').textContent = milestone.emoji;
+            document.getElementById('popupReward').textContent = milestone.reward;
+            
+            const popup = document.getElementById('rewardPopup');
+            popup.style.display = 'flex';
+            
+            // Create confetti
+            createConfetti();
+            
+            // Play celebration animation
+            celebrateCompletion();
+        }
+
+        function closeRewardPopup() {
+            document.getElementById('rewardPopup').style.display = 'none';
+        }
+
+        function createConfetti() {
+            const colors = ['#FF9ECD', '#FFB3D9', '#7EC8E3', '#B8E0F6', '#FFD4E5'];
+            const popup = document.querySelector('.reward-popup-content');
+            
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                    popup.appendChild(confetti);
+                    
+                    setTimeout(() => confetti.remove(), 3000);
+                }, i * 30);
+            }
+        }
+
+        function celebrateCompletion() {
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    const animal = document.createElement('div');
+                    animal.className = 'floating-animals';
+                    animal.textContent = animals[Math.floor(Math.random() * animals.length)];
+                    animal.style.left = Math.random() * window.innerWidth + 'px';
+                    animal.style.top = Math.random() * window.innerHeight + 'px';
+                    document.body.appendChild(animal);
+
+                    setTimeout(() => animal.remove(), 3000);
+                }, i * 200);
+            }
+        }
+
+        function spawnFloatingAnimals() {
+            setInterval(() => {
+                if (Math.random() > 0.7) {
+                    const animal = document.createElement('div');
+                    animal.className = 'floating-animals';
+                    animal.textContent = animals[Math.floor(Math.random() * animals.length)];
+                    animal.style.left = Math.random() * window.innerWidth + 'px';
+                    animal.style.top = Math.random() * window.innerHeight + 'px';
+                    animal.style.animationDuration = (2 + Math.random() * 3) + 's';
+                    document.body.appendChild(animal);
+
+                    setTimeout(() => animal.remove(), 5000);
+                }
+            }, 3000);
+        }
+
+        function updateStats() {
+            const completed = quests.filter(q => q.completed).length;
+            document.getElementById('totalQuests').textContent = quests.length;
+            document.getElementById('completedQuests').textContent = completed;
+            
+            const hours = Math.floor(totalStudySeconds / 3600);
+            const minutes = Math.floor((totalStudySeconds % 3600) / 60);
+            document.getElementById('totalTime').textContent = `${hours}h ${minutes}m`;
+        }
+
+        // Bubble animation system
+        function createBubbles() {
+            const container = document.getElementById('bubbleContainer');
+            
+            setInterval(() => {
+                if (Math.random() > 0.7) {
+                    const bubble = document.createElement('div');
+                    bubble.className = 'bubble';
+                    
+                    const size = 20 + Math.random() * 40;
+                    bubble.style.width = size + 'px';
+                    bubble.style.height = size + 'px';
+                    bubble.style.left = Math.random() * window.innerWidth + 'px';
+                    bubble.style.animationDuration = (10 + Math.random() * 10) + 's';
+                    bubble.style.animationDelay = Math.random() * 2 + 's';
+                    
+                    container.appendChild(bubble);
+                    
+                    setTimeout(() => bubble.remove(), 20000);
+                }
+            }, 2000);
+        }
+
+        // Study buddy character interactions
+        function updateStudyBuddy() {
+            const buddy = document.getElementById('studyBuddy');
+            
+            if (isTimerRunning) {
+                buddy.classList.add('studying');
+            } else {
+                buddy.classList.remove('studying');
+            }
+        }
+
+        function petBuddy() {
+            const buddy = document.getElementById('studyBuddy');
+            const messages = [
+                "Çok iyi gidiyorsun! 💙",
+                "Gördüğüm en yetenikli kız sensin! 🌟",
+                "Profesör Ahtapot seni çok seviyor! 🐠",
+                "Profesör Ahtapot senin başarabileceğine inanıyor! 💪",
+                "Unutma, mola vermek en doğal hakkın! 🌊"
+            ];
+            
+            // Show random encouraging message
+            showSpeechBubble(messages[Math.floor(Math.random() * messages.length)]);
+            
+            // Happy animation
+            buddy.style.transform = 'scale(1.2) rotate(360deg)';
+            setTimeout(() => {
+                buddy.style.transform = '';
+            }, 500);
+        }
+
+        function showSpeechBubble(message) {
+            // Remove old bubble if exists
+            const oldBubble = document.querySelector('.speech-bubble');
+            if (oldBubble) oldBubble.remove();
+            
+            const bubble = document.createElement('div');
+            bubble.className = 'speech-bubble';
+            bubble.textContent = message;
+            document.body.appendChild(bubble);
+            
+            setTimeout(() => bubble.remove(), 4000);
+        }
+
+        // Storage
+        function saveToStorage() {
+            const data = {
+                totalPoints,
+                maxPoints,
+                quests,
+                totalStudySeconds,
+                rewardMilestones,
+                adminPassword,
+                unlockedRewards,
+                lastCheckedPoints,
+                soundData: celebrationSound ? celebrationSound.src : null,
+                soundVolume,
+                thermometerHeight,
+                thermometerWidth,
+                thermometerColor
+            };
+            
+            // Save to localStorage (backup)
+            localStorage.setItem('marineMotivation', JSON.stringify(data));
+            
+            // Save to Firebase (sync across devices)
+            if (syncEnabled && database) {
+                database.ref(`users/${USER_ID}`).set(data).catch(err => {
+                    console.error("Firebase save error:", err);
+                });
+            }
+        }
+
+        function loadFromStorage() {
+            if (syncEnabled && database) {
+                // Load from Firebase (real-time sync)
+                database.ref(`users/${USER_ID}`).on('value', snapshot => {
+                    const data = snapshot.val();
+                    if (data) {
+                        applyLoadedData(data);
+                    } else {
+                        // No Firebase data, try localStorage
+                        loadFromLocalStorage();
+                    }
+                });
+            } else {
+                // No Firebase, use localStorage
+                loadFromLocalStorage();
+            }
+        }
+
+        function loadFromLocalStorage() {
+            const saved = localStorage.getItem('marineMotivation');
+            if (saved) {
+                const data = JSON.parse(saved);
+                applyLoadedData(data);
+            }
+        }
+
+        function applyLoadedData(data) {
+            totalPoints = data.totalPoints || 0;
+            maxPoints = data.maxPoints || 100;
+            quests = data.quests || [];
+            totalStudySeconds = data.totalStudySeconds || 0;
+            rewardMilestones = data.rewardMilestones || [];
+            adminPassword = data.adminPassword || 'admin123';
+            unlockedRewards = data.unlockedRewards || [];
+            lastCheckedPoints = data.lastCheckedPoints || 0;
+            soundVolume = data.soundVolume || 0.8;
+            thermometerHeight = data.thermometerHeight || 400;
+            thermometerWidth = data.thermometerWidth || 100;
+            thermometerColor = data.thermometerColor || 'pink';
+            
+            // Restore sound if saved
+            if (data.soundData) {
+                celebrationSound = new Audio(data.soundData);
+                celebrationSound.volume = soundVolume;
+            }
+            
+            // Update UI
+            document.getElementById('volumeSlider').value = soundVolume * 100;
+            document.getElementById('volumeDisplay').textContent = Math.round(soundVolume * 100) + '%';
+            
+            renderQuests();
+        }
+        // Start
+        init();
+    </script>
+</body>
+</html>
