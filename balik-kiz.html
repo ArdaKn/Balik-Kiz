@@ -864,15 +864,16 @@
         // 13. Register app, copy the config object
         // 14. Paste your config below (replace the placeholder)
         
-        // REPLACE THIS WITH YOUR FIREBASE CONFIG:
+        // YOUR FIREBASE CONFIG:
         const firebaseConfig = {
-            apiKey: "YOUR-API-KEY-HERE",
-            authDomain: "your-project.firebaseapp.com",
-            databaseURL: "https://your-project-default-rtdb.firebaseio.com",
-            projectId: "your-project-id",
-            storageBucket: "your-project.appspot.com",
-            messagingSenderId: "123456789",
-            appId: "1:123456789:web:abcdef123456"
+            apiKey: "AIzaSyDAboE0PsB5jSPx_cobk6tjQ8R6N7h7Iok",
+            authDomain: "balik-kiz.firebaseapp.com",
+            databaseURL: "https://balik-kiz-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "balik-kiz",
+            storageBucket: "balik-kiz.firebasestorage.app",
+            messagingSenderId: "644227301048",
+            appId: "1:644227301048:web:cda688ca9f54969f4abe4d",
+            measurementId: "G-CWPY1RW2QW"
         };
         
         // Initialize Firebase
@@ -880,22 +881,17 @@
         let syncEnabled = false;
         
         try {
-            if (firebaseConfig.apiKey !== "YOUR-API-KEY-HERE") {
-                firebase.initializeApp(firebaseConfig);
-                database = firebase.database();
-                syncEnabled = true;
-                console.log("✅ Firebase connected - sync enabled!");
-            } else {
-                console.log("⚠️ Firebase not configured - using local storage only");
-            }
+            firebase.initializeApp(firebaseConfig);
+            database = firebase.database();
+            syncEnabled = true;
+            console.log("✅ Firebase connected - sync enabled!");
         } catch (error) {
             console.log("⚠️ Firebase error - using local storage only:", error);
             syncEnabled = false;
         }
         
-        // Unique session ID (so you can have multiple users)
-        // Change this to a unique identifier for your girlfriend
-        const USER_ID = "girlfriend"; // You can change this to her name or any unique ID
+        // User ID for this app
+        const USER_ID = "balik-kiz";
         
         // ============================================
         // STATE & VARIABLES
