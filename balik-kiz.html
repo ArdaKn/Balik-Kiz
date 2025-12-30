@@ -3,9 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Balık Kız 🐠</title>
+    <title>Marine Motivation Tracker 🐠</title>
+    
+    <!-- Firebase SDK (Compat version - no modules needed) -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    
     <style>
         * {
             margin: 0;
@@ -200,7 +203,8 @@
             border: 4px solid #7EC8E3;
         }
 
-        /* Decorative coral/seaweed borders */
+        /* Decorative coral/seaweed borders - OPTIONAL (only if images exist) */
+        /* Uncomment these if you have the images:
         .thermometer-container::before {
             content: '';
             position: absolute;
@@ -224,14 +228,42 @@
             opacity: 0.7;
             pointer-events: none;
         }
+        */
 
-        /* Decorative shells at corners */
+        /* Decorative shells at corners - OPTIONAL (only if image exists) */
+        /* Uncomment this if you have the shell.png image:
         .shell-decoration {
             position: absolute;
             width: 40px;
             height: 40px;
             background: url('./images/shell.png') center/contain no-repeat;
             z-index: 10;
+        }
+        */
+        
+        /* Shell positions (for when you uncomment above) */
+        .shell-top-left {
+            top: -20px;
+            left: -20px;
+            transform: rotate(-15deg);
+        }
+
+        .shell-top-right {
+            top: -20px;
+            right: -20px;
+            transform: rotate(15deg);
+        }
+
+        .shell-bottom-left {
+            bottom: -20px;
+            left: -20px;
+            transform: rotate(15deg);
+        }
+
+        .shell-bottom-right {
+            bottom: -20px;
+            right: -20px;
+            transform: rotate(-15deg);
         }
 
         .shell-top-left {
@@ -615,13 +647,9 @@
     <div class="container">
         <h1>
             <div class="profile-pic"></div>
-            🐠 Balık Kızın Uygulaması 🐚
+            🐠 Marine Motivation Tracker 🐚
         </h1>
-        <div class="subtitle">Bugün çok güzel bir gün olacak! 🌊</div>
-
-        <!-- Decorative shells -->
-        <div class="shell-decoration shell-top-left"></div>
-        <div class="shell-decoration shell-top-right"></div>
+        <div class="subtitle">You're doing amazing! Keep swimming! 🌊</div>
 
         <!-- Hidden Admin Button (top right corner) -->
         <div style="position: fixed; top: 20px; right: 20px; z-index: 9999;">
@@ -737,10 +765,10 @@
                 <input type="number" id="questPoints" placeholder="Points" value="10" min="1">
                 <button onclick="addQuest()">➕ Add Quest</button>
             </div>
+            
+            <div id="adminQuestList" style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;"></div>
 
             <hr style="margin: 20px 0; border: 1px dashed #FFB3D9;">
-
-            <h3 style="color: #7EC8E3; margin-bottom: 15px;">🎁 Secret Reward Milestones</h3>
             <p style="color: #666; margin-bottom: 15px;">⚠️ These rewards are hidden from her! They'll pop up as surprises when unlocked.</p>
             
             <div style="margin-bottom: 15px;">
@@ -752,17 +780,6 @@
             <div id="rewardMilestoneList" style="display: flex; flex-direction: column; gap: 10px;"></div>
 
             <hr style="margin: 20px 0; border: 1px dashed #FFB3D9;">
-
-            <h3 style="color: #7EC8E3; margin-bottom: 15px;">📝 Quest Management</h3>
-            <p style="color: #666; margin-bottom: 15px;">Add and manage quests for her. She can only view and complete them.</p>
-            
-            <div class="quest-input-area">
-                <input type="text" id="adminQuestName" placeholder="Enter quest name...">
-                <input type="number" id="adminQuestPoints" placeholder="Points" value="10" min="1">
-                <button onclick="addQuest()">➕ Add Quest</button>
-            </div>
-            
-            <div id="adminQuestList" style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;"></div>
         </div>
 
         <div class="timer-section">
@@ -777,7 +794,7 @@
         </div>
 
         <div class="thermometer-container">
-            <h2 style="color: #7EC8E3; text-align: center; margin-bottom: 20px;">🌡️ Progress Bar</h2>
+            <h2 style="color: #7EC8E3; text-align: center; margin-bottom: 20px;">🌡️ Progress Thermometer</h2>
             <div class="thermometer">
                 <div class="thermometer-fill" id="thermometerFill"></div>
                 <div class="reward-markers" id="rewardMarkers"></div>
@@ -826,35 +843,63 @@
     </div>
 
     <script>
+        // ============================================
+        // FIREBASE CONFIGURATION (for synchronization)
+        // ============================================
+        
+        // INSTRUCTIONS TO SET UP FIREBASE:
+        // 1. Go to https://console.firebase.google.com/
+        // 2. Click "Add project" or use existing project
+        // 3. Give it a name (e.g., "marine-motivation")
+        // 4. Disable Google Analytics (not needed)
+        // 5. Click "Create project"
+        // 6. In left sidebar, click "Realtime Database"
+        // 7. Click "Create Database"
+        // 8. Choose location (closest to you)
+        // 9. Start in "test mode" (we'll secure it later)
+        // 10. Go to Project Settings (gear icon) > General
+        // 11. Scroll down to "Your apps" > Web app
+        // 12. Click "</>" icon to add web app
+        // 13. Register app, copy the config object
+        // 14. Paste your config below (replace the placeholder)
+        
+        // REPLACE THIS WITH YOUR FIREBASE CONFIG:
         const firebaseConfig = {
-            apiKey: "AIzaSyDAboE0PsB5jSPx_cobk6tjQ8R6N7h7Iok",
-            authDomain: "balik-kiz.firebaseapp.com",
-            databaseURL: "https://balik-kiz-default-rtdb.europe-west1.firebasedatabase.app",
-            projectId: "balik-kiz",
-            storageBucket: "balik-kiz.firebasestorage.app",
-            messagingSenderId: "644227301048",
-            appId: "1:644227301048:web:cda688ca9f54969f4abe4d",
-            measurementId: "G-CWPY1RW2QW"
+            apiKey: "YOUR-API-KEY-HERE",
+            authDomain: "your-project.firebaseapp.com",
+            databaseURL: "https://your-project-default-rtdb.firebaseio.com",
+            projectId: "your-project-id",
+            storageBucket: "your-project.appspot.com",
+            messagingSenderId: "123456789",
+            appId: "1:123456789:web:abcdef123456"
         };
-
+        
         // Initialize Firebase
         let database = null;
         let syncEnabled = false;
-
+        
         try {
-            firebase.initializeApp(firebaseConfig);
-            database = firebase.database();
-            syncEnabled = true;
-            console.log("✅ Firebase connected - sync enabled!");
+            if (firebaseConfig.apiKey !== "YOUR-API-KEY-HERE") {
+                firebase.initializeApp(firebaseConfig);
+                database = firebase.database();
+                syncEnabled = true;
+                console.log("✅ Firebase connected - sync enabled!");
+            } else {
+                console.log("⚠️ Firebase not configured - using local storage only");
+            }
         } catch (error) {
             console.log("⚠️ Firebase error - using local storage only:", error);
             syncEnabled = false;
         }
-
-        // User ID for syncing
-        const USER_ID = "balik-kiz";
-
-// State
+        
+        // Unique session ID (so you can have multiple users)
+        // Change this to a unique identifier for your girlfriend
+        const USER_ID = "girlfriend"; // You can change this to her name or any unique ID
+        
+        // ============================================
+        // STATE & VARIABLES
+        // ============================================
+        
         // State
         let totalPoints = 0;
         let maxPoints = 100;
@@ -1247,8 +1292,8 @@
 
         // Quest functions
         function addQuest() {
-            const name = document.getElementById('adminQuestName').value.trim();
-            const points = parseInt(document.getElementById('adminQuestPoints').value);
+            const name = document.getElementById('questName').value.trim();
+            const points = parseInt(document.getElementById('questPoints').value);
             
             if (!name) {
                 alert('Please enter a quest name! 🐠');
@@ -1262,8 +1307,8 @@
                 completed: false
             });
 
-            document.getElementById('adminQuestName').value = '';
-            document.getElementById('adminQuestPoints').value = '10';
+            document.getElementById('questName').value = '';
+            document.getElementById('questPoints').value = '10';
             
             renderQuests();
             renderAdminQuests();
@@ -1561,12 +1606,12 @@
             setTimeout(() => bubble.remove(), 4000);
         }
 
-        // Storage
+        // Storage - Now with Firebase sync!
         function saveToStorage() {
             const data = {
                 totalPoints,
                 maxPoints,
-                quests,
+                quests: quests.length > 0 ? quests : [], // Ensure empty array is saved
                 totalStudySeconds,
                 rewardMilestones,
                 adminPassword,
@@ -1579,35 +1624,48 @@
                 thermometerColor
             };
             
+            console.log('💾 Saving to Firebase:', { questCount: quests.length, quests: quests });
+            
             // Save to localStorage (backup)
             localStorage.setItem('marineMotivation', JSON.stringify(data));
             
             // Save to Firebase (sync across devices)
             if (syncEnabled && database) {
-                database.ref(`users/${USER_ID}`).set(data).catch(err => {
-                    console.error("Firebase save error:", err);
-                });
+                database.ref(`users/${USER_ID}`).set(data)
+                    .then(() => console.log('✅ Firebase saved successfully'))
+                    .catch(err => console.error("❌ Firebase save error:", err));
             }
         }
 
         function loadFromStorage() {
             if (syncEnabled && database) {
                 // Load from Firebase (real-time sync)
-                database.ref(`users/${USER_ID}`).on('value', snapshot => {
+                database.ref(`users/${USER_ID}`).once('value').then(snapshot => {
                     const data = snapshot.val();
                     if (data) {
                         applyLoadedData(data);
+                        
+                        // Set up real-time listener for changes
+                        database.ref(`users/${USER_ID}`).on('value', snapshot => {
+                            const newData = snapshot.val();
+                            if (newData) {
+                                applyLoadedData(newData);
+                            }
+                        });
                     } else {
-                        // No Firebase data, try localStorage
+                        // No data in Firebase, try localStorage
                         loadFromLocalStorage();
                     }
+                }).catch(err => {
+                    console.error("Firebase load error:", err);
+                    loadFromLocalStorage();
                 });
             } else {
                 // No Firebase, use localStorage
                 loadFromLocalStorage();
             }
         }
-
+        
         function loadFromLocalStorage() {
             const saved = localStorage.getItem('marineMotivation');
             if (saved) {
@@ -1615,8 +1673,10 @@
                 applyLoadedData(data);
             }
         }
-
+        
         function applyLoadedData(data) {
+            console.log('✨ Applying loaded data. Quests in data:', data.quests);
+            
             totalPoints = data.totalPoints || 0;
             maxPoints = data.maxPoints || 100;
             quests = data.quests || [];
@@ -1640,8 +1700,11 @@
             document.getElementById('volumeSlider').value = soundVolume * 100;
             document.getElementById('volumeDisplay').textContent = Math.round(soundVolume * 100) + '%';
             
+            console.log('✅ Rendering quests. Total quests:', quests.length);
             renderQuests();
+            renderAdminQuests(); // Also render admin quests if in admin panel
         }
+
         // Start
         init();
     </script>
