@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Balık Kız 🐠</title>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <style>
         * {
             margin: 0;
@@ -162,35 +160,6 @@
             margin-bottom: 30px;
         }
 
-        .settings-panel {
-            background: #FFF5F7;
-            border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 30px;
-            border: 3px dashed #FFB3D9;
-        }
-
-        .setting-row {
-            margin-bottom: 15px;
-        }
-
-        label {
-            display: block;
-            color: #FF9ECD;
-            font-weight: bold;
-            margin-bottom: 5px;
-            font-size: 1.1em;
-        }
-
-        input[type="number"] {
-            width: 150px;
-            padding: 10px;
-            border: 2px solid #B8E0F6;
-            border-radius: 15px;
-            font-size: 1em;
-            background: white;
-        }
-
         .thermometer-container {
             background: linear-gradient(to bottom, #B8E0F6, #E0F7FF);
             border-radius: 25px;
@@ -310,11 +279,6 @@
             animation: bounce 0.5s ease;
         }
 
-        .reward-marker.locked {
-            filter: grayscale(100%);
-            opacity: 0.5;
-        }
-
         @keyframes bounce {
             0%, 100% { transform: scale(1.2); }
             50% { transform: scale(1.4); }
@@ -328,6 +292,58 @@
             margin-top: 20px;
         }
 
+        /* Timer Controls */
+        .timer-section {
+            background: #FFF5F7;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 3px dashed #FFB3D9;
+            text-align: center;
+        }
+
+        .timer-display {
+            font-size: 3em;
+            color: #FF9ECD;
+            font-weight: bold;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+        }
+
+        .timer-controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #FF9ECD, #FFB3D9);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(255, 158, 205, 0.3);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(255, 158, 205, 0.5);
+        }
+
+        button:active {
+            transform: translateY(-1px);
+        }
+
+        button.danger {
+            background: linear-gradient(135deg, #FF6B9D, #FF9ECD);
+        }
+
+        /* Quest Section */
         .quest-section {
             background: #E0F7FF;
             border-radius: 20px;
@@ -350,28 +366,6 @@
             border: 2px solid #7EC8E3;
             border-radius: 15px;
             font-size: 1em;
-        }
-
-        .quest-input-area input[type="number"] {
-            width: 100px;
-        }
-
-        button {
-            padding: 12px 25px;
-            background: linear-gradient(135deg, #FF9ECD, #FFB3D9);
-            color: white;
-            border: none;
-            border-radius: 20px;
-            font-size: 1em;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 10px rgba(255, 158, 205, 0.3);
-        }
-
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(255, 158, 205, 0.5);
         }
 
         .quest-list {
@@ -420,57 +414,13 @@
             color: #999;
         }
 
-        .quest-points {
-            background: #FFD4E5;
-            color: #FF9ECD;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-weight: bold;
-        }
-
         .delete-btn {
             background: linear-gradient(135deg, #FFB3D9, #FFD4E5);
             padding: 8px 15px;
             font-size: 0.9em;
         }
 
-        .timer-section {
-            background: #FFF5F7;
-            border-radius: 20px;
-            padding: 25px;
-            margin-bottom: 30px;
-            text-align: center;
-            border: 3px solid #FFB3D9;
-        }
-
-        .timer-display {
-            font-size: 3em;
-            color: #FF9ECD;
-            font-weight: bold;
-            margin: 20px 0;
-            font-family: 'Courier New', monospace;
-        }
-
-        .timer-controls {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .floating-animals {
-            position: fixed;
-            pointer-events: none;
-            z-index: 1000;
-            font-size: 3em;
-            animation: float 3s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-20px) rotate(5deg); }
-        }
-
+        /* Stats Section */
         .stats {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -498,46 +448,7 @@
             margin-top: 5px;
         }
 
-        .milestone-item {
-            background: white;
-            padding: 15px;
-            border-radius: 15px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            border: 2px solid #B8E0F6;
-        }
-
-        .milestone-item input[type="number"] {
-            width: 100px;
-        }
-
-        .milestone-item input[type="text"] {
-            flex: 1;
-            min-width: 200px;
-            padding: 10px;
-            border: 2px solid #B8E0F6;
-            border-radius: 10px;
-            font-size: 1em;
-        }
-
-        .milestone-item select {
-            padding: 10px;
-            border: 2px solid #B8E0F6;
-            border-radius: 10px;
-            font-size: 1.5em;
-            background: white;
-            cursor: pointer;
-        }
-
-        .remove-milestone-btn {
-            background: linear-gradient(135deg, #FFB3D9, #FFD4E5);
-            padding: 8px 15px;
-            font-size: 0.9em;
-            min-width: 80px;
-        }
-
-        /* Reward Popup Modal */
+        /* Reward Popup */
         .reward-popup {
             display: none;
             position: fixed;
@@ -576,9 +487,14 @@
 
         .reward-popup-emoji {
             font-size: 6em;
-            animation: bounce 1s ease infinite;
+            animation: bounceReward 1s ease infinite;
             display: block;
             margin-bottom: 20px;
+        }
+
+        @keyframes bounceReward {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
         }
 
         .reward-popup-title {
@@ -595,6 +511,7 @@
             line-height: 1.5;
         }
 
+        /* Confetti */
         .confetti {
             position: absolute;
             width: 10px;
@@ -609,162 +526,49 @@
                 opacity: 0;
             }
         }
+
+        /* Floating animals - minimized to transparent bubbles */
+        .floating-animals {
+            position: fixed;
+            pointer-events: none;
+            z-index: 1000;
+            font-size: 2em;
+            opacity: 0.15;
+            animation: floatAway 8s ease-out forwards;
+        }
+
+        @keyframes floatAway {
+            to {
+                transform: translateY(-100vh) rotate(180deg);
+                opacity: 0;
+            }
+        }
+
+        /* Reset button styling */
+        .reset-section {
+            text-align: center;
+            margin-top: 30px;
+        }
     </style>
 </head>
 <body>
+    <div id="bubbleContainer"></div>
+    
+    <!-- Study Buddy Character -->
+    <div class="study-buddy" id="studyBuddy" onclick="petBuddy()"></div>
+
     <div class="container">
+        <!-- Decorative shells -->
+        <div class="shell-decoration shell-top-left"></div>
+        <div class="shell-decoration shell-top-right"></div>
+
         <h1>
             <div class="profile-pic"></div>
             🐠 Balık Kızın Uygulaması 🐚
         </h1>
         <div class="subtitle">Bugün çok güzel bir gün olacak! 🌊</div>
 
-        <!-- Decorative shells -->
-        <div class="shell-decoration shell-top-left"></div>
-        <div class="shell-decoration shell-top-right"></div>
-
-        <!-- Hidden Admin Button (top right corner) -->
-        <div style="position: fixed; top: 20px; right: 20px; z-index: 9999;">
-            <button onclick="showAdminLogin()" style="background: rgba(255,255,255,0.3); backdrop-filter: blur(10px); border: 2px solid rgba(255,255,255,0.5); padding: 10px 15px; font-size: 0.9em;">
-                ⚙️ Admin
-            </button>
-        </div>
-
-        <!-- Admin Login Modal -->
-        <div id="adminLoginModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; justify-content: center; align-items: center;">
-            <div style="background: white; padding: 40px; border-radius: 30px; text-align: center; max-width: 400px;">
-                <h2 style="color: #FF9ECD; margin-bottom: 20px;">🔐 Admin Access</h2>
-                <input type="password" id="adminPassword" placeholder="Enter password" 
-                       style="width: 100%; padding: 15px; border: 2px solid #B8E0F6; border-radius: 15px; font-size: 1.1em; margin-bottom: 20px;"
-                       onkeypress="if(event.key === 'Enter') checkAdminPassword()">
-                <div style="display: flex; gap: 10px; justify-content: center;">
-                    <button onclick="checkAdminPassword()">✅ Login</button>
-                    <button onclick="closeAdminLogin()" style="background: linear-gradient(135deg, #FFB3D9, #FFD4E5);">❌ Cancel</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Admin Panel -->
-        <div class="settings-panel" id="adminPanel" style="display: none; position: relative;">
-            <div style="position: absolute; top: 15px; right: 15px;">
-                <button onclick="closeAdminPanel()" style="background: linear-gradient(135deg, #FFB3D9, #FFD4E5); padding: 8px 15px; font-size: 0.9em;">
-                    👁️ Exit Admin
-                </button>
-            </div>
-            <h2 style="color: #FF9ECD; margin-bottom: 15px;">⚙️ Admin Settings</h2>
-            
-            <div class="setting-row">
-                <label>Points per minute of study time:</label>
-                <input type="number" id="pointsPerMinute" value="1" min="0.1" step="0.1" onchange="saveToStorage()">
-            </div>
-            
-            <div class="setting-row">
-                <label>Change Admin Password:</label>
-                <input type="password" id="newPassword" placeholder="New password">
-                <button onclick="changePassword()" style="margin-left: 10px;">🔒 Update Password</button>
-            </div>
-
-            <div class="setting-row">
-                <label>🔊 Celebration Sound Effect:</label>
-                <input type="file" id="soundFile" accept="audio/*" onchange="handleSoundUpload(this)">
-                <button onclick="testSound()" style="margin-left: 10px;">🎵 Test Sound</button>
-                <button onclick="removeSound()" style="margin-left: 10px; background: linear-gradient(135deg, #FFB3D9, #FFD4E5);">🔇 Remove</button>
-            </div>
-
-            <div class="setting-row">
-                <label>Sound Volume: <span id="volumeDisplay">80%</span></label>
-                <input type="range" id="volumeSlider" min="0" max="100" value="80" 
-                       style="width: 200px;" oninput="updateVolume(this.value)">
-            </div>
-
-            <hr style="margin: 20px 0; border: 1px dashed #FFB3D9;">
-
-            <h3 style="color: #FF9ECD; margin-bottom: 15px;">🔄 Reset Options</h3>
-            <p style="color: #666; margin-bottom: 15px;">⚠️ Use these carefully! These actions cannot be undone.</p>
-            
-            <div class="setting-row">
-                <button onclick="resetThermometer()" style="background: linear-gradient(135deg, #FFB3D9, #FFD4E5);">
-                    🌡️ Reset Thermometer (Keep Quests)
-                </button>
-                <button onclick="resetStudyTime()" style="background: linear-gradient(135deg, #FFB3D9, #FFD4E5); margin-left: 10px;">
-                    ⏱️ Reset Study Time Only
-                </button>
-            </div>
-            
-            <div class="setting-row" style="margin-top: 10px;">
-                <button onclick="resetEverything()" style="background: linear-gradient(135deg, #FF6B9D, #FF9ECD);">
-                    ⚠️ Reset Everything (Full Reset)
-                </button>
-            </div>
-
-            <hr style="margin: 20px 0; border: 1px dashed #FFB3D9;">
-
-            <h3 style="color: #7EC8E3; margin-bottom: 15px;">🌡️ Thermometer Customization</h3>
-            
-            <div class="setting-row">
-                <label>Thermometer Height:</label>
-                <input type="range" id="thermometerHeight" min="200" max="600" value="400" 
-                       style="width: 200px;" oninput="updateThermometerHeight(this.value)">
-                <span id="heightDisplay" style="margin-left: 10px; color: #7EC8E3;">400px</span>
-            </div>
-
-            <div class="setting-row">
-                <label>Thermometer Width:</label>
-                <input type="range" id="thermometerWidth" min="50" max="200" value="100" 
-                       style="width: 200px;" oninput="updateThermometerWidth(this.value)">
-                <span id="widthDisplay" style="margin-left: 10px; color: #7EC8E3;">100%</span>
-            </div>
-
-            <div class="setting-row">
-                <label>Fill Color:</label>
-                <select id="fillColor" onchange="updateThermometerColor(this.value)">
-                    <option value="pink">Pink Gradient (default)</option>
-                    <option value="blue">Blue Gradient</option>
-                    <option value="purple">Purple Gradient</option>
-                    <option value="green">Green Gradient</option>
-                    <option value="rainbow">Rainbow Gradient</option>
-                    <option value="ocean">Ocean Gradient</option>
-                </select>
-            </div>
-
-            <hr style="margin: 20px 0; border: 1px dashed #FFB3D9;">
-
-            <h3 style="color: #7EC8E3; margin-bottom: 15px;">📝 Quest Management</h3>
-            <p style="color: #666; margin-bottom: 15px;">Add and manage quests here. Only you can add/edit quests.</p>
-            
-            <div class="quest-input-area" style="margin-bottom: 20px;">
-                <input type="text" id="questName" placeholder="Enter quest name...">
-                <input type="number" id="questPoints" placeholder="Points" value="10" min="1">
-                <button onclick="addQuest()">➕ Add Quest</button>
-            </div>
-
-            <hr style="margin: 20px 0; border: 1px dashed #FFB3D9;">
-
-            <h3 style="color: #7EC8E3; margin-bottom: 15px;">🎁 Secret Reward Milestones</h3>
-            <p style="color: #666; margin-bottom: 15px;">⚠️ These rewards are hidden from her! They'll pop up as surprises when unlocked.</p>
-            
-            <div style="margin-bottom: 15px;">
-                <button onclick="addRewardMilestone()">➕ Add New Milestone</button>
-                <button onclick="resetToDefaults()" style="background: linear-gradient(135deg, #FFB3D9, #FFD4E5); margin-left: 10px;">
-                    🔄 Reset to Defaults
-                </button>
-            </div>
-            <div id="rewardMilestoneList" style="display: flex; flex-direction: column; gap: 10px;"></div>
-
-            <hr style="margin: 20px 0; border: 1px dashed #FFB3D9;">
-
-            <h3 style="color: #7EC8E3; margin-bottom: 15px;">📝 Quest Management</h3>
-            <p style="color: #666; margin-bottom: 15px;">Add and manage quests for her. She can only view and complete them.</p>
-            
-            <div class="quest-input-area">
-                <input type="text" id="adminQuestName" placeholder="Enter quest name...">
-                <input type="number" id="adminQuestPoints" placeholder="Points" value="10" min="1">
-                <button onclick="addQuest()">➕ Add Quest</button>
-            </div>
-            
-            <div id="adminQuestList" style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;"></div>
-        </div>
-
+        <!-- Timer Section -->
         <div class="timer-section">
             <h2 style="color: #FF9ECD; margin-bottom: 15px;">⏱️ Study Timer</h2>
             <div class="timer-display" id="timerDisplay">00:00:00</div>
@@ -776,6 +580,7 @@
             </div>
         </div>
 
+        <!-- Thermometer -->
         <div class="thermometer-container">
             <h2 style="color: #7EC8E3; text-align: center; margin-bottom: 20px;">🌡️ Progress Bar</h2>
             <div class="thermometer">
@@ -785,12 +590,20 @@
             <div class="progress-text" id="progressText">0 / 100 points</div>
         </div>
 
+        <!-- Quest Section -->
         <div class="quest-section">
             <h2 style="color: #7EC8E3; margin-bottom: 15px;">📝 Quest List</h2>
             <p style="color: #999; font-size: 0.9em; margin-bottom: 15px;">✨ Your assigned tasks appear below</p>
+            
+            <div class="quest-input-area">
+                <input type="text" id="questInput" placeholder="Enter quest name..." onkeypress="if(event.key === 'Enter') addQuest()">
+                <button onclick="addQuest()">➕ Add Quest</button>
+            </div>
+
             <div class="quest-list" id="questList"></div>
         </div>
 
+        <!-- Stats -->
         <div class="stats">
             <div class="stat-card">
                 <div class="stat-number" id="totalQuests">0</div>
@@ -805,13 +618,15 @@
                 <div class="stat-label">Total Study Time</div>
             </div>
         </div>
+
+        <!-- Reset Progress Section -->
+        <div class="reset-section">
+            <button onclick="resetProgress()" class="danger">🔄 Reset Progress</button>
+            <p style="color: #7EC8E3; margin-top: 10px; font-size: 0.9em;">
+                (Resets total time, progress, and quests)
+            </p>
+        </div>
     </div>
-
-    <!-- Animated Bubbles -->
-    <div id="bubbleContainer"></div>
-
-    <!-- Study Buddy Character -->
-    <div class="study-buddy" id="studyBuddy" onclick="petBuddy()"></div>
 
     <!-- Reward Popup Modal -->
     <div id="rewardPopup" class="reward-popup">
@@ -826,35 +641,6 @@
     </div>
 
     <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyDAboE0PsB5jSPx_cobk6tjQ8R6N7h7Iok",
-            authDomain: "balik-kiz.firebaseapp.com",
-            databaseURL: "https://balik-kiz-default-rtdb.europe-west1.firebasedatabase.app",
-            projectId: "balik-kiz",
-            storageBucket: "balik-kiz.firebasestorage.app",
-            messagingSenderId: "644227301048",
-            appId: "1:644227301048:web:cda688ca9f54969f4abe4d",
-            measurementId: "G-CWPY1RW2QW"
-        };
-
-        // Initialize Firebase
-        let database = null;
-        let syncEnabled = false;
-
-        try {
-            firebase.initializeApp(firebaseConfig);
-            database = firebase.database();
-            syncEnabled = true;
-            console.log("✅ Firebase connected - sync enabled!");
-        } catch (error) {
-            console.log("⚠️ Firebase error - using local storage only:", error);
-            syncEnabled = false;
-        }
-
-        // User ID for syncing
-        const USER_ID = "balik-kiz";
-
-// State
         // State
         let totalPoints = 0;
         let maxPoints = 100;
@@ -863,372 +649,66 @@
         let timerInterval = null;
         let isTimerRunning = false;
         let totalStudySeconds = 0;
-        let rewardMilestones = [];
-        let adminPassword = 'admin123';
-        let unlockedRewards = []; // Track which rewards have been shown
-        let lastCheckedPoints = 0; // Track last point value to detect new unlocks
-        let celebrationSound = null; // Audio object for celebration sound
-        let soundVolume = 0.8; // Default volume (80%)
-        let thermometerHeight = 400;
-        let thermometerWidth = 100;
-        let thermometerColor = 'pink';
+        let unlockedRewards = [];
+        let lastCheckedPoints = 0;
 
-        // Marine animals for rewards
+        // Marine animals for rewards - minimized
         const animals = ['🐠', '🐡', '🐟', '🐙', '🦈', '🐳', '🐬', '🦀', '🐚', '⭐', '🦑', '🐋', '🦐', '🦞', '🐊', '🦭', '🦦', '🪼', '🪸', '🐢'];
 
-        // Initialize default milestones
-        function createDefaultMilestones() {
-            return [
-                { points: 20, reward: 'First reward!', emoji: '🐠' },
-                { points: 40, reward: 'Second reward!', emoji: '🐡' },
-                { points: 60, reward: 'Third reward!', emoji: '🐟' },
-                { points: 80, reward: 'Fourth reward!', emoji: '🐙' },
-                { points: 100, reward: 'Fifth reward!', emoji: '🦈' }
-            ];
-        }
-
-        // Admin functions
-        function showAdminLogin() {
-            document.getElementById('adminLoginModal').style.display = 'flex';
-            document.getElementById('adminPassword').value = '';
-            document.getElementById('adminPassword').focus();
-        }
-
-        function closeAdminLogin() {
-            document.getElementById('adminLoginModal').style.display = 'none';
-        }
-
-        function checkAdminPassword() {
-            const input = document.getElementById('adminPassword').value;
-            if (input === adminPassword) {
-                closeAdminLogin();
-                document.getElementById('adminPanel').style.display = 'block';
-                renderAdminQuests(); // Show admin quest list
-            } else {
-                alert('❌ Incorrect password!');
-                document.getElementById('adminPassword').value = '';
-            }
-        }
-
-        function closeAdminPanel() {
-            document.getElementById('adminPanel').style.display = 'none';
-        }
-
-        function changePassword() {
-            const newPass = document.getElementById('newPassword').value;
-            if (!newPass) {
-                alert('Please enter a new password!');
-                return;
-            }
-            if (newPass.length < 4) {
-                alert('Password must be at least 4 characters!');
-                return;
-            }
-            adminPassword = newPass;
-            document.getElementById('newPassword').value = '';
-            saveToStorage();
-            alert('✅ Password updated successfully!');
-        }
-
-        // Reset functions
-        function resetThermometer() {
-            if (confirm('⚠️ Reset thermometer progress to zero?\n\nThis will:\n• Reset points to 0\n• Reset unlocked rewards\n• Keep all quests\n• Keep study time\n\nContinue?')) {
-                totalPoints = 0;
-                lastCheckedPoints = 0;
-                unlockedRewards = [];
-                updateDisplay();
-                saveToStorage();
-                alert('✅ Thermometer reset! Points are back to zero.');
-            }
-        }
-
-        function resetStudyTime() {
-            if (confirm('⚠️ Reset total study time to zero?\n\nThis will only reset the study time counter.\nEverything else stays the same.\n\nContinue?')) {
-                totalStudySeconds = 0;
-                updateStats();
-                saveToStorage();
-                alert('✅ Study time reset!');
-            }
-        }
-
-        function resetEverything() {
-            if (confirm('🚨 FULL RESET WARNING 🚨\n\nThis will delete EVERYTHING:\n• All progress and points\n• All quests\n• All study time\n• All unlocked rewards\n• Reward milestones (back to defaults)\n• Sound settings\n\nOnly the password will be kept.\n\nAre you ABSOLUTELY sure?')) {
-                if (confirm('Last chance! This cannot be undone. Really reset everything?')) {
-                    // Reset everything except password
-                    totalPoints = 0;
-                    lastCheckedPoints = 0;
-                    unlockedRewards = [];
-                    quests = [];
-                    totalStudySeconds = 0;
-                    timerSeconds = 0;
-                    rewardMilestones = createDefaultMilestones();
-                    celebrationSound = null;
-                    soundVolume = 0.8;
-                    
-                    // Reset thermometer customization
-                    thermometerHeight = 400;
-                    thermometerWidth = 100;
-                    fillColorGradient = 'pink';
-                    
-                    // Update displays
-                    calculateMaxPoints();
-                    renderQuests();
-                    renderAdminQuests();
-                    renderRewardMilestones();
-                    updateDisplay();
-                    updateStats();
-                    updateTimerDisplay();
-                    applyThermometerSettings();
-                    
-                    // Save and inform
-                    saveToStorage();
-                    alert('✅ Everything has been reset! Starting fresh.');
-                }
-            }
-        }
-
-        // Sound functions
-        function handleSoundUpload(input) {
-            const file = input.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const audioData = e.target.result;
-                celebrationSound = new Audio(audioData);
-                celebrationSound.volume = soundVolume;
-                saveToStorage();
-                alert('✅ Sound effect uploaded! Click "Test Sound" to preview.');
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function testSound() {
-            if (celebrationSound) {
-                celebrationSound.currentTime = 0;
-                celebrationSound.play().catch(err => {
-                    alert('Error playing sound. Make sure you uploaded a valid audio file.');
-                });
-            } else {
-                alert('No sound uploaded yet! Upload an audio file first.');
-            }
-        }
-
-        function removeSound() {
-            celebrationSound = null;
-            document.getElementById('soundFile').value = '';
-            saveToStorage();
-            alert('🔇 Sound effect removed.');
-        }
-
-        function updateVolume(value) {
-            soundVolume = value / 100;
-            document.getElementById('volumeDisplay').textContent = value + '%';
-            if (celebrationSound) {
-                celebrationSound.volume = soundVolume;
-            }
-            saveToStorage();
-        }
-
-        function playRewardSound() {
-            if (celebrationSound) {
-                celebrationSound.currentTime = 0;
-                celebrationSound.volume = soundVolume;
-                celebrationSound.play().catch(err => {
-                    console.log('Could not play sound:', err);
-                });
-            }
-        }
-
-        // Thermometer customization functions
-        function updateThermometerHeight(value) {
-            thermometerHeight = parseInt(value);
-            document.getElementById('heightDisplay').textContent = value + 'px';
-            document.querySelector('.thermometer').style.height = value + 'px';
-            saveToStorage();
-        }
-
-        function updateThermometerWidth(value) {
-            thermometerWidth = parseInt(value);
-            document.getElementById('widthDisplay').textContent = value + '%';
-            document.querySelector('.thermometer').style.width = value + '%';
-            saveToStorage();
-        }
-
-        function updateThermometerColor(color) {
-            thermometerColor = color;
-            const fill = document.getElementById('thermometerFill');
-            
-            const gradients = {
-                pink: 'linear-gradient(to top, #FF9ECD, #FFB3D9, #FFD4E5)',
-                blue: 'linear-gradient(to top, #4A90E2, #7EC8E3, #B8E0F6)',
-                purple: 'linear-gradient(to top, #9B59B6, #BB8FCE, #D7BDE2)',
-                green: 'linear-gradient(to top, #2ECC71, #58D68D, #A9DFBF)',
-                rainbow: 'linear-gradient(to top, #FF6B6B, #FFD93D, #6BCB77, #4D96FF, #9B59B6)',
-                ocean: 'linear-gradient(to top, #0C4271, #1E6091, #3A7CA5, #81C3D7, #B8E0F6)'
-            };
-            
-            fill.style.background = gradients[color];
-            saveToStorage();
-        }
-
-        function applyThermometerSettings() {
-            document.querySelector('.thermometer').style.height = thermometerHeight + 'px';
-            document.querySelector('.thermometer').style.width = thermometerWidth + '%';
-            updateThermometerColor(thermometerColor);
-            
-            document.getElementById('thermometerHeight').value = thermometerHeight;
-            document.getElementById('thermometerWidth').value = thermometerWidth;
-            document.getElementById('fillColor').value = thermometerColor;
-            document.getElementById('heightDisplay').textContent = thermometerHeight + 'px';
-            document.getElementById('widthDisplay').textContent = thermometerWidth + '%';
-        }
+        // Milestone rewards - hidden until reached
+        const rewardMilestones = [
+            { points: 20, emoji: '💙', reward: 'Okula gelince ilk seninle buluşucam' },
+            { points: 40, emoji: '🖨️', reward: '3D Baskı ile istediğin bir şey' },
+            { points: 60, emoji: '🎁', reward: 'Sana istediğin bir hediye alıcaz' },
+            { points: 80, emoji: '❓', reward: '???' },
+            { points: 100, emoji: '🌼', reward: '🌼Nergis Çiçeği ve Ben🌼' }
+        ];
 
         // Initialize
         function init() {
             loadFromStorage();
-            if (rewardMilestones.length === 0) {
-                rewardMilestones = createDefaultMilestones();
-            }
-            calculateMaxPoints();
-            renderRewardMilestones();
-            applyThermometerSettings();
             updateDisplay();
-            updateStats();
+            renderQuests();
+            createBubbles();
             spawnFloatingAnimals();
-            createBubbles(); // Add bubbles
-            updateStudyBuddy(); // Initialize study buddy
-        }
-
-        // Reward milestone functions
-        function addRewardMilestone() {
-            const lastPoints = rewardMilestones.length > 0 
-                ? rewardMilestones[rewardMilestones.length - 1].points 
-                : 0;
-            
-            rewardMilestones.push({
-                points: lastPoints + 20,
-                reward: 'New reward!',
-                emoji: animals[rewardMilestones.length % animals.length]
-            });
-            
-            renderRewardMilestones();
-            calculateMaxPoints();
-            updateDisplay();
-            saveToStorage();
-        }
-
-        function removeRewardMilestone(index) {
-            if (rewardMilestones.length <= 1) {
-                alert('You need at least one reward milestone! 🐠');
-                return;
-            }
-            rewardMilestones.splice(index, 1);
-            renderRewardMilestones();
-            calculateMaxPoints();
-            updateDisplay();
-            saveToStorage();
-        }
-
-        function updateRewardMilestone(index, field, value) {
-            if (field === 'points') {
-                rewardMilestones[index].points = parseInt(value) || 0;
-            } else if (field === 'reward') {
-                rewardMilestones[index].reward = value;
-            } else if (field === 'emoji') {
-                rewardMilestones[index].emoji = value;
-            }
-            
-            calculateMaxPoints();
-            updateDisplay();
-            saveToStorage();
-        }
-
-        function resetToDefaults() {
-            if (confirm('Reset all milestones to defaults? This will keep your current progress.')) {
-                rewardMilestones = createDefaultMilestones();
-                renderRewardMilestones();
-                calculateMaxPoints();
-                updateDisplay();
-                saveToStorage();
-            }
-        }
-
-        function renderRewardMilestones() {
-            const container = document.getElementById('rewardMilestoneList');
-            container.innerHTML = '';
-
-            rewardMilestones.sort((a, b) => a.points - b.points);
-
-            rewardMilestones.forEach((milestone, index) => {
-                const item = document.createElement('div');
-                item.className = 'milestone-item';
-                
-                const emojiOptions = animals.map(a => 
-                    `<option value="${a}" ${a === milestone.emoji ? 'selected' : ''}>${a}</option>`
-                ).join('');
-
-                item.innerHTML = `
-                    <label style="color: #7EC8E3; font-weight: bold; min-width: 80px;">Milestone ${index + 1}:</label>
-                    <input type="number" value="${milestone.points}" min="1" 
-                           onchange="updateRewardMilestone(${index}, 'points', this.value)"
-                           placeholder="Points">
-                    <label style="color: #7EC8E3;">pts →</label>
-                    <select onchange="updateRewardMilestone(${index}, 'emoji', this.value)">
-                        ${emojiOptions}
-                    </select>
-                    <input type="text" value="${milestone.reward}" 
-                           onchange="updateRewardMilestone(${index}, 'reward', this.value)"
-                           placeholder="Reward description">
-                    <button class="remove-milestone-btn" onclick="removeRewardMilestone(${index})">Remove</button>
-                `;
-                container.appendChild(item);
-            });
-        }
-
-        function calculateMaxPoints() {
-            if (rewardMilestones.length > 0) {
-                maxPoints = Math.max(...rewardMilestones.map(m => m.points));
-            } else {
-                maxPoints = 100;
-            }
         }
 
         // Timer functions
         function startTimer() {
             if (!isTimerRunning) {
                 isTimerRunning = true;
-                updateStudyBuddy(); // Update buddy appearance
+                updateStudyBuddy();
+                
                 timerInterval = setInterval(() => {
                     timerSeconds++;
                     totalStudySeconds++;
-                    updateTimerDisplay();
                     
-                    // Add points per minute
-                    const pointsPerMinute = parseFloat(document.getElementById('pointsPerMinute').value);
-                    if (timerSeconds % 60 === 0) {
-                        addPoints(pointsPerMinute);
+                    // Earn 0.5 points per minute (120 seconds = 1 point)
+                    if (totalStudySeconds % 120 === 0) {
+                        totalPoints += 1;
+                        checkMilestones();
+                        updateDisplay();
+                        saveToStorage();
                     }
+                    
+                    updateTimerDisplay();
                 }, 1000);
             }
         }
 
         function pauseTimer() {
             isTimerRunning = false;
-            updateStudyBuddy(); // Update buddy appearance
-            clearInterval(timerInterval);
+            updateStudyBuddy();
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
         }
 
         function stopTimer() {
             pauseTimer();
-            const pointsPerMinute = parseFloat(document.getElementById('pointsPerMinute').value);
-            const remainingSeconds = timerSeconds % 60;
-            if (remainingSeconds > 0) {
-                addPoints((remainingSeconds / 60) * pointsPerMinute);
-            }
-            timerSeconds = 0;
-            updateTimerDisplay();
             saveToStorage();
+            showSpeechBubble('Progress saved! 💾');
         }
 
         function resetTimer() {
@@ -1241,193 +721,121 @@
             const hours = Math.floor(timerSeconds / 3600);
             const minutes = Math.floor((timerSeconds % 3600) / 60);
             const seconds = timerSeconds % 60;
+            
             document.getElementById('timerDisplay').textContent = 
                 `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
         }
 
         // Quest functions
         function addQuest() {
-            const name = document.getElementById('adminQuestName').value.trim();
-            const points = parseInt(document.getElementById('adminQuestPoints').value);
+            const input = document.getElementById('questInput');
+            const questText = input.value.trim();
             
-            if (!name) {
-                alert('Please enter a quest name! 🐠');
-                return;
+            if (questText) {
+                quests.push({
+                    id: Date.now(),
+                    text: questText,
+                    completed: false
+                });
+                
+                input.value = '';
+                renderQuests();
+                saveToStorage();
             }
-
-            quests.push({
-                id: Date.now(),
-                name: name,
-                points: points,
-                completed: false
-            });
-
-            document.getElementById('adminQuestName').value = '';
-            document.getElementById('adminQuestPoints').value = '10';
-            
-            renderQuests();
-            renderAdminQuests();
-            updateStats();
-            saveToStorage();
         }
 
         function toggleQuest(id) {
             const quest = quests.find(q => q.id === id);
-            if (!quest) return;
-
-            quest.completed = !quest.completed;
-            
-            if (quest.completed) {
-                addPoints(quest.points);
-                celebrateCompletion();
-            } else {
-                addPoints(-quest.points);
+            if (quest) {
+                quest.completed = !quest.completed;
+                
+                if (quest.completed) {
+                    // Quest completed - award 5 points
+                    totalPoints += 20;
+                    checkMilestones();
+                    celebrateCompletion();
+                }
+                
+                renderQuests();
+                updateDisplay();
+                saveToStorage();
             }
-
-            renderQuests();
-            renderAdminQuests();
-            updateStats();
-            saveToStorage();
         }
 
         function deleteQuest(id) {
-            const quest = quests.find(q => q.id === id);
-            if (quest && quest.completed) {
-                addPoints(-quest.points);
-            }
-            
             quests = quests.filter(q => q.id !== id);
             renderQuests();
-            renderAdminQuests();
-            updateStats();
             saveToStorage();
         }
 
         function renderQuests() {
             const questList = document.getElementById('questList');
-            questList.innerHTML = '';
-
-            if (quests.length === 0) {
-                questList.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">No quests assigned yet! 🐠</p>';
-                return;
-            }
-
-            quests.forEach(quest => {
-                const questItem = document.createElement('div');
-                questItem.className = `quest-item ${quest.completed ? 'completed' : ''}`;
-                questItem.innerHTML = `
-                    <div style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; font-size: 1.5em;">
-                        ${quest.completed ? '✅' : '⏳'}
-                    </div>
-                    <div class="quest-text">${quest.name}</div>
-                    <div class="quest-points">+${quest.points} pts</div>
-                `;
-                questList.appendChild(questItem);
-            });
-        }
-
-        // Admin quest list (with controls)
-        function renderAdminQuests() {
-            const adminQuestList = document.getElementById('adminQuestList');
-            if (!adminQuestList) return; // Not in admin panel
             
-            adminQuestList.innerHTML = '';
-
             if (quests.length === 0) {
-                adminQuestList.innerHTML = '<p style="color: #999; text-align: center; padding: 10px;">No quests created yet.</p>';
+                questList.innerHTML = '<div style="text-align: center; color: #7EC8E3; padding: 20px;">No quests yet. Add one above! 🌊</div>';
                 return;
             }
-
-            quests.forEach(quest => {
-                const questItem = document.createElement('div');
-                questItem.className = `quest-item ${quest.completed ? 'completed' : ''}`;
-                questItem.style.display = 'flex';
-                questItem.style.alignItems = 'center';
-                questItem.style.gap = '15px';
-                questItem.innerHTML = `
+            
+            questList.innerHTML = quests.map(quest => `
+                <div class="quest-item ${quest.completed ? 'completed' : ''}">
                     <input type="checkbox" class="quest-checkbox" 
                            ${quest.completed ? 'checked' : ''} 
                            onchange="toggleQuest(${quest.id})">
-                    <div class="quest-text" style="flex: 1;">${quest.name}</div>
-                    <div class="quest-points">+${quest.points} pts</div>
-                    <button class="delete-btn" onclick="deleteQuest(${quest.id})">🗑️</button>
-                `;
-                adminQuestList.appendChild(questItem);
-            });
-        }
-
-        // Points and progress
-        function addPoints(points) {
-            totalPoints = Math.max(0, totalPoints + points);
-            checkNewRewards(); // Check if any rewards were unlocked
-            updateDisplay();
-            saveToStorage();
-        }
-
-        function updateDisplay() {
-            const percentage = Math.min(100, (totalPoints / maxPoints) * 100);
-            document.getElementById('thermometerFill').style.height = `${percentage}%`;
-            document.getElementById('progressText').textContent = `${totalPoints.toFixed(1)} / ${maxPoints} points`;
+                    <span class="quest-text">${quest.text}</span>
+                    <button class="delete-btn" onclick="deleteQuest(${quest.id})">🗑️ Delete</button>
+                </div>
+            `).join('');
             
-            updateRewardMarkers();
+            updateStats();
         }
 
-        function updateRewardMarkers() {
-            const markersContainer = document.getElementById('rewardMarkers');
-            markersContainer.innerHTML = '';
-
-            rewardMilestones.forEach((milestone, index) => {
-                const percentage = (milestone.points / maxPoints) * 100;
-                const isUnlocked = totalPoints >= milestone.points;
-
-                const marker = document.createElement('div');
-                marker.className = `reward-marker ${isUnlocked ? 'unlocked' : 'locked'}`;
-                marker.style.top = `${100 - percentage}%`;
-                marker.style.transform = 'translateY(50%)';
-                marker.textContent = isUnlocked ? milestone.emoji : '❓';
-                // Only show points threshold, NOT the reward text (keep it secret!)
-                marker.title = `${milestone.points} points`;
-                
-                markersContainer.appendChild(marker);
-            });
+        // Display functions
+        function updateDisplay() {
+            // Update thermometer fill
+            const fillPercentage = Math.min((totalPoints / maxPoints) * 100, 100);
+            document.getElementById('thermometerFill').style.height = fillPercentage + '%';
+            
+            // Update progress text
+            document.getElementById('progressText').textContent = `${totalPoints} / ${maxPoints} points`;
+            
+            // Update reward markers
+            renderRewardMarkers();
+            updateStats();
         }
 
-        // Check for newly unlocked rewards
-        function checkNewRewards() {
+        function renderRewardMarkers() {
+            const container = document.getElementById('rewardMarkers');
+            const thermometerHeight = 400;
+            
+            container.innerHTML = rewardMilestones
+                .filter(milestone => totalPoints >= milestone.points)
+                .map(milestone => {
+                    const position = thermometerHeight - (milestone.points / maxPoints) * thermometerHeight;
+                    return `
+                        <div class="reward-marker unlocked" style="top: ${position}px;">
+                            ${milestone.emoji}
+                        </div>
+                    `;
+                }).join('');
+        }
+
+        function checkMilestones() {
             rewardMilestones.forEach(milestone => {
-                // Check if this milestone was just unlocked
-                if (totalPoints >= milestone.points && 
-                    lastCheckedPoints < milestone.points &&
-                    !unlockedRewards.includes(milestone.points)) {
-                    
-                    // Mark as unlocked
+                if (totalPoints >= milestone.points && !unlockedRewards.includes(milestone.points)) {
                     unlockedRewards.push(milestone.points);
-                    
-                    // Show popup after a brief delay
-                    setTimeout(() => {
-                        showRewardPopup(milestone);
-                    }, 500);
+                    showRewardPopup(milestone);
                 }
             });
-            
-            lastCheckedPoints = totalPoints;
-            saveToStorage();
         }
 
         function showRewardPopup(milestone) {
-            // Play celebration sound
-            playRewardSound();
-            
             document.getElementById('popupEmoji').textContent = milestone.emoji;
             document.getElementById('popupReward').textContent = milestone.reward;
             
             const popup = document.getElementById('rewardPopup');
             popup.style.display = 'flex';
             
-            // Create confetti
             createConfetti();
-            
-            // Play celebration animation
             celebrateCompletion();
         }
 
@@ -1454,7 +862,8 @@
         }
 
         function celebrateCompletion() {
-            for (let i = 0; i < 5; i++) {
+            // Minimized celebration - just 2 animals
+            for (let i = 0; i < 2; i++) {
                 setTimeout(() => {
                     const animal = document.createElement('div');
                     animal.className = 'floating-animals';
@@ -1463,25 +872,26 @@
                     animal.style.top = Math.random() * window.innerHeight + 'px';
                     document.body.appendChild(animal);
 
-                    setTimeout(() => animal.remove(), 3000);
+                    setTimeout(() => animal.remove(), 8000);
                 }, i * 200);
             }
         }
 
         function spawnFloatingAnimals() {
+            // Spawn minimized transparent bubbles every minute
             setInterval(() => {
-                if (Math.random() > 0.7) {
+                if (Math.random() > 0.5) {
                     const animal = document.createElement('div');
                     animal.className = 'floating-animals';
                     animal.textContent = animals[Math.floor(Math.random() * animals.length)];
                     animal.style.left = Math.random() * window.innerWidth + 'px';
                     animal.style.top = Math.random() * window.innerHeight + 'px';
-                    animal.style.animationDuration = (2 + Math.random() * 3) + 's';
+                    animal.style.animationDuration = (5 + Math.random() * 5) + 's';
                     document.body.appendChild(animal);
 
-                    setTimeout(() => animal.remove(), 5000);
+                    setTimeout(() => animal.remove(), 10000);
                 }
-            }, 3000);
+            }, 60000); // Every minute
         }
 
         function updateStats() {
@@ -1494,7 +904,7 @@
             document.getElementById('totalTime').textContent = `${hours}h ${minutes}m`;
         }
 
-        // Bubble animation system
+        // Bubble animation
         function createBubbles() {
             const container = document.getElementById('bubbleContainer');
             
@@ -1517,7 +927,7 @@
             }, 2000);
         }
 
-        // Study buddy character interactions
+        // Study buddy interactions
         function updateStudyBuddy() {
             const buddy = document.getElementById('studyBuddy');
             
@@ -1532,16 +942,14 @@
             const buddy = document.getElementById('studyBuddy');
             const messages = [
                 "Çok iyi gidiyorsun! 💙",
-                "Gördüğüm en yetenikli kız sensin! 🌟",
+                "Gördüğüm en yetenekli kız sensin! 🌟",
                 "Profesör Ahtapot seni çok seviyor! 🐠",
                 "Profesör Ahtapot senin başarabileceğine inanıyor! 💪",
                 "Unutma, mola vermek en doğal hakkın! 🌊"
             ];
             
-            // Show random encouraging message
             showSpeechBubble(messages[Math.floor(Math.random() * messages.length)]);
             
-            // Happy animation
             buddy.style.transform = 'scale(1.2) rotate(360deg)';
             setTimeout(() => {
                 buddy.style.transform = '';
@@ -1549,7 +957,6 @@
         }
 
         function showSpeechBubble(message) {
-            // Remove old bubble if exists
             const oldBubble = document.querySelector('.speech-bubble');
             if (oldBubble) oldBubble.remove();
             
@@ -1561,88 +968,54 @@
             setTimeout(() => bubble.remove(), 4000);
         }
 
-        // Storage
+        // Storage functions
         function saveToStorage() {
             const data = {
                 totalPoints,
                 maxPoints,
                 quests,
                 totalStudySeconds,
-                rewardMilestones,
-                adminPassword,
                 unlockedRewards,
-                lastCheckedPoints,
-                soundData: celebrationSound ? celebrationSound.src : null,
-                soundVolume,
-                thermometerHeight,
-                thermometerWidth,
-                thermometerColor
+                lastCheckedPoints
             };
             
-            // Save to localStorage (backup)
             localStorage.setItem('marineMotivation', JSON.stringify(data));
-            
-            // Save to Firebase (sync across devices)
-            if (syncEnabled && database) {
-                database.ref(`users/${USER_ID}`).set(data).catch(err => {
-                    console.error("Firebase save error:", err);
-                });
-            }
         }
 
         function loadFromStorage() {
-            if (syncEnabled && database) {
-                // Load from Firebase (real-time sync)
-                database.ref(`users/${USER_ID}`).on('value', snapshot => {
-                    const data = snapshot.val();
-                    if (data) {
-                        applyLoadedData(data);
-                    } else {
-                        // No Firebase data, try localStorage
-                        loadFromLocalStorage();
-                    }
-                });
-            } else {
-                // No Firebase, use localStorage
-                loadFromLocalStorage();
-            }
-        }
-
-        function loadFromLocalStorage() {
             const saved = localStorage.getItem('marineMotivation');
             if (saved) {
                 const data = JSON.parse(saved);
-                applyLoadedData(data);
+                totalPoints = data.totalPoints || 0;
+                maxPoints = data.maxPoints || 100;
+                quests = data.quests || [];
+                totalStudySeconds = data.totalStudySeconds || 0;
+                unlockedRewards = data.unlockedRewards || [];
+                lastCheckedPoints = data.lastCheckedPoints || 0;
             }
         }
 
-        function applyLoadedData(data) {
-            totalPoints = data.totalPoints || 0;
-            maxPoints = data.maxPoints || 100;
-            quests = data.quests || [];
-            totalStudySeconds = data.totalStudySeconds || 0;
-            rewardMilestones = data.rewardMilestones || [];
-            adminPassword = data.adminPassword || 'admin123';
-            unlockedRewards = data.unlockedRewards || [];
-            lastCheckedPoints = data.lastCheckedPoints || 0;
-            soundVolume = data.soundVolume || 0.8;
-            thermometerHeight = data.thermometerHeight || 400;
-            thermometerWidth = data.thermometerWidth || 100;
-            thermometerColor = data.thermometerColor || 'pink';
-            
-            // Restore sound if saved
-            if (data.soundData) {
-                celebrationSound = new Audio(data.soundData);
-                celebrationSound.volume = soundVolume;
+        // Reset progress function
+        function resetProgress() {
+            if (confirm('⚠️ Reset all progress, total time, and quests?\n\nThis will:\n• Reset points to 0\n• Reset unlocked rewards\n• Delete all quests\n• Reset study time\n\nContinue?')) {
+                totalPoints = 0;
+                totalStudySeconds = 0;
+                quests = [];
+                unlockedRewards = [];
+                lastCheckedPoints = 0;
+                timerSeconds = 0;
+                
+                pauseTimer();
+                updateTimerDisplay();
+                renderQuests();
+                updateDisplay();
+                saveToStorage();
+                
+                showSpeechBubble('Everything reset! New beginning! 🌊');
             }
-            
-            // Update UI
-            document.getElementById('volumeSlider').value = soundVolume * 100;
-            document.getElementById('volumeDisplay').textContent = Math.round(soundVolume * 100) + '%';
-            
-            renderQuests();
         }
-        // Start
+
+        // Start the app
         init();
     </script>
 </body>
