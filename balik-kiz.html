@@ -754,6 +754,9 @@
                     totalPoints += 20;
                     checkMilestones();
                     celebrateCompletion();
+                } else {
+                    // Quest uncompleted - subtract 5 points
+                    totalPoints = Math.max(0, totalPoints - 5);
                 }
                 
                 renderQuests();
@@ -763,6 +766,14 @@
         }
 
         function deleteQuest(id) {
+            const quest = quests.find(q => q.id === id);
+            
+            // If the quest was completed, subtract the points before deleting
+            if (quest && quest.completed) {
+                totalPoints = Math.max(0, totalPoints - 5);
+                updateDisplay();
+            }
+            
             quests = quests.filter(q => q.id !== id);
             renderQuests();
             saveToStorage();
